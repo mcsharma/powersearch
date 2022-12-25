@@ -1,2 +1,2 @@
 # powersearch
-Pluggable Entities Search Interface
+Plugable Entities Search Interface
