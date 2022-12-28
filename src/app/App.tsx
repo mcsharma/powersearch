@@ -18,6 +18,11 @@ const GlobalStyle = styled.createGlobalStyle`
     font-family: verdana;
     font-size: 14px;
   }
+  [contenteditable="true"]:empty:not(:focus):before {
+    content: attr(data-ph);
+    color: grey;
+    font-style: italic;
+  }
 `;
 
 const App: React.FC = () => {

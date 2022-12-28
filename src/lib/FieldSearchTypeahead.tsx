@@ -2,20 +2,11 @@ import { Field, FieldBase, SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import { schemaFields } from "../app/testSchema";
-import debounce from "./util/debounce";
+import debounce from "./utils/debounce";
 import * as ReactDOM from "react-dom";
 import FieldSearchTypeaheadResults from "./FieldSearchTypeaheadResults";
+import TextInput from "./components/TextInput";
 
-const Input = window.styled.input`
-  box-sizing: border-box;
-  height: 28px;
-  border: 0;
-  outline: 0;
-  flex-grow: 1;
-  &:focus {
-    outline: none!important;
-  }
-`;
 interface IFieldSearchTypeahead {
   onSelect: (field: FieldBase) => void;
   appendTo: HTMLDivElement;
@@ -41,9 +32,9 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
     [filterResults]
   );
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
-    filterResultsDebounced(event.target.value);
+  const onChange = (value: string) => {
+    setQuery(value);
+    filterResultsDebounced(value);
   };
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -56,12 +47,13 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
 
   return (
     <>
-      <Input
-        type="text"
+      <TextInput
+        height="100%"
+        border="none"
         onChange={onChange}
         value={query}
         placeholder="Search fields.."
-        ref={inputRef}
+        inputRef={inputRef}
       />
       {inputRef.current &&
         ReactDOM.createPortal(

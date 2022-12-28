@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TOKEN_BORDER_RADIUS } from "./util/constants";
+import { TOKEN_BORDER_RADIUS } from "./utils/constants";
 import CrossIcon from "./icons/cross";
 
 interface IRemoveFilterButton {

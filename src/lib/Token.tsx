@@ -1,6 +1,6 @@
 import { OperatorType, SimpleFilter } from "./types";
 import * as React from "react";
-import { TOKEN_BORDER_RADIUS } from "./util/constants";
+import { TOKEN_BORDER_RADIUS } from "./utils/constants";
 
 type RoundMode = "left" | "right" | "none" | "both";
 
@@ -24,9 +24,6 @@ const Root = window.styled.div.attrs(({ round }: { round: RoundMode }) => ({
   justify-content: center;
   align-items: center;
   background-color: rgb(228 241 255);
-  &:not(:last-child) {
-    margin-right: 1px;
-  }
   flex-shrink: 0;
   border-radius: ${({ round }) => roundModeToBorderRadius[round]}
 `;

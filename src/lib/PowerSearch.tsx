@@ -7,10 +7,10 @@ const styled = window.styled;
 
 const Root = styled.div`
   box-sizing: border-box;
-  height: 40px;
-  width: 800px;
+  height: 44px;
+  min-width: 800px;
   padding: 4px;
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   border: 1px solid lightgray;
   align-items: stretch;
@@ -51,7 +51,11 @@ const PowerSearch: React.FC<IPowerSearch> = ({ schema }) => {
         />
       ))}
       {selectedField ? (
-        <DraftFilter field={selectedField} onDone={addFilter} />
+        <DraftFilter
+          field={selectedField}
+          onDone={addFilter}
+          onRemove={() => setSelectedField(null)}
+        />
       ) : rootRef.current ? (
         <FieldSearchTypeahead
           onSelect={setSelectedField}

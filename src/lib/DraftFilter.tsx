@@ -2,7 +2,8 @@ import { FieldBase, OperatorType, SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import FilterValuesInput from "./FilterValuesInput";
-import { getRandomString } from "./util/random";
+import { getRandomString } from "./utils/random";
+import RemoveFilterButton from "./RemoveFilterButton";
 
 const Root = window.styled.div`
   display: flex;
@@ -14,11 +15,11 @@ const Root = window.styled.div`
 interface IActiveFilter {
   field: FieldBase;
   onDone: (filter: SimpleFilter<any>) => void;
+  onRemove: () => void;
 }
 
-const DraftFilter: React.FC<IActiveFilter> = ({ field, onDone }) => {
+const DraftFilter: React.FC<IActiveFilter> = ({ field, onDone, onRemove }) => {
   const [operator, setOperator] = React.useState<OperatorType>(OperatorType.IS);
-  const [values, setValues] = React.useState<Array<any>>([]);
   const opLabel = OperatorType[operator].toLowerCase().replace(/_/g, " ");
   const onInputDone = (values: Array<any>) => {
     onDone({ id: getRandomString(), field, operator, values });
@@ -26,17 +27,12 @@ const DraftFilter: React.FC<IActiveFilter> = ({ field, onDone }) => {
   return (
     <Root>
       <Token round="left" label={field.name} key="field" />
+      <div style={{ width: 1 }} />
       <Token round="none" label={opLabel} key="op" />
       <FilterValuesInput onDone={onInputDone} />
+      <RemoveFilterButton onClick={onRemove} />
     </Root>
   );
 };
 
 export default DraftFilter;
-
-const valuesList = (values: Array<any>): string => {
-  if (values.length < 3) {
-    return values.join(", ");
-  }
-  return `${values[0]} and ${values.length - 1} other values`;
-};

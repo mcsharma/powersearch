@@ -2,7 +2,7 @@ import { Field, FieldBase, SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import { schemaFields } from "../app/testSchema";
-import debounce from "./util/debounce";
+import debounce from "./utils/debounce";
 import * as ReactDOM from "react-dom";
 
 interface IFieldSearchTypeaheadResults {

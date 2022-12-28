@@ -23,8 +23,11 @@ const AddedFilter: React.FC<IFilterToken> = ({ filter, onDelete }) => {
   return (
     <Root>
       <Token round="left" label={filter.field.name} key="field" />
+      <div style={{ width: 1 }} />
       <Token round="none" label={opLabel} key="op" />
+      <div style={{ width: 1 }} />
       <Token round="none" label={valuesLabel} key="value" />
+      <div style={{ width: 1 }} />
       <RemoveFilterButton onClick={onDelete} />
     </Root>
   );
