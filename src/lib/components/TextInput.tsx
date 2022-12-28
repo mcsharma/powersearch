@@ -134,7 +134,7 @@ const TextInput: React.FC<ITextInput> = ({
   height = 32,
   width = "auto",
   maxWidth,
-  minWidth = 72,
+  minWidth = 110,
 }) => {
   const onKeyDown = (e: KeyboardEvent) =>
     e.key === "Enter" ? onEnter && onEnter() : null;
@@ -156,7 +156,7 @@ const TextInput: React.FC<ITextInput> = ({
           onChange(e.currentTarget.textContent ?? "")
         }
         onKeyDown={onKeyDown}
-      ></SpanInput>
+      />
     );
   }
   return (
