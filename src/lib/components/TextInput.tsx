@@ -13,8 +13,12 @@ interface ITextInput {
   placeholder?: string; // default '' (empty string)
   value: string;
   onChange: (value: string) => void;
-  onEnter?: () => void;
-  inputRef?: React.RefObject<HTMLElement>;
+  onKeyDown?: (key: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  inputRef?:
+    | React.RefObject<HTMLSpanElement>
+    | React.RefObject<HTMLInputElement>;
 }
 
 const SpanInput = window.styled.span.attrs(
@@ -127,7 +131,9 @@ const TextInput: React.FC<ITextInput> = ({
   placeholder,
   value,
   onChange,
-  onEnter,
+  onKeyDown,
+  onFocus,
+  onBlur,
   inputRef,
   border,
   borderColor,
@@ -136,9 +142,6 @@ const TextInput: React.FC<ITextInput> = ({
   maxWidth,
   minWidth = 110,
 }) => {
-  const onKeyDown = (e: KeyboardEvent) =>
-    e.key === "Enter" ? onEnter && onEnter() : null;
-
   if (autoGrow) {
     return (
       <SpanInput
@@ -146,7 +149,7 @@ const TextInput: React.FC<ITextInput> = ({
         width={width}
         minWidth={minWidth}
         maxWidth={maxWidth}
-        inputRef={inputRef}
+        ref={inputRef}
         border={border}
         borderColor={borderColor}
         role="textbox"
@@ -155,7 +158,13 @@ const TextInput: React.FC<ITextInput> = ({
         onInput={(e: React.FormEvent<HTMLSpanElement>) =>
           onChange(e.currentTarget.textContent ?? "")
         }
-        onKeyDown={onKeyDown}
+        onKeyDown={
+          onKeyDown
+            ? (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown(e.key)
+            : undefined
+        }
+        onBlur={onBlur}
+        onFocus={onFocus}
       />
     );
   }
@@ -173,8 +182,14 @@ const TextInput: React.FC<ITextInput> = ({
       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
         onChange(e.target.value)
       }
-      onKeyDown={onKeyDown}
-      ref={inputRef ?? undefined}
+      onKeyDown={
+        onKeyDown
+          ? (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown(e.key)
+          : undefined
+      }
+      onBlur={onBlur}
+      onFocus={onFocus}
+      ref={(inputRef as React.RefObject<HTMLInputElement>) ?? undefined}
     />
   );
 };

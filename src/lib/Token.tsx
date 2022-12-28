@@ -1,6 +1,6 @@
 import { OperatorType, SimpleFilter } from "./types";
 import * as React from "react";
-import { TOKEN_BORDER_RADIUS } from "./utils/constants";
+import { TOKEN_BORDER_RADIUS, TOKEN_COLOR } from "./utils/constants";
 
 type RoundMode = "left" | "right" | "none" | "both";
 
@@ -18,12 +18,12 @@ interface IToken {
 const Root = window.styled.div.attrs(({ round }: { round: RoundMode }) => ({
   round,
 }))`
-  padding: 0 4px;
+  padding: 0 12px;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(228 241 255);
+  background-color: ${TOKEN_COLOR};
   flex-shrink: 0;
   border-radius: ${({ round }) => roundModeToBorderRadius[round]}
 `;

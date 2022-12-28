@@ -5,6 +5,7 @@ export enum FieldType {
   STRING_ENUM,
   TEXT,
   DATE,
+  DATE_AND_TIME,
   ARRAY,
   COMPOSITE,
 }
@@ -16,6 +17,7 @@ export enum OperatorType {
   IS_LESS_THAN_OR_EQUAL,
   IS_GREATER_THAN,
   IS_GREATER_THAN_OR_EQUAL,
+  IS_BETWEEN,
   CONTAINS,
   NOT_CONTAINS,
   STARTS_WITH,
@@ -27,8 +29,6 @@ export enum OperatorType {
   CONTAINS_ANY_OF,
   CONTAINS_ALL_OF,
   CONTAINS_NONE_OF,
-  IS_BEFORE,
-  IS_AFTER,
 }
 
 export enum FilterType {

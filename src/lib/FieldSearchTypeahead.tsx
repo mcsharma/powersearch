@@ -17,6 +17,15 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
 }) => {
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<Array<FieldBase>>(schemaFields);
+  const [activeResultIndex, setActiveResultIndex] = React.useState(0);
+  const [resultsShown, setResultsShown] = React.useState(false);
+  const onInputBlur = () => setResultsShown(false);
+  const onInputFocus = () => setResultsShown(true);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  // Extra state, just to force another update, so that portal can render
+  // after input DOM ref is set
+  const [hasInputNode, setHasInputNode] = React.useState(false);
+
   const filterResults = React.useCallback(
     (query: string) => {
       setResults(
@@ -24,6 +33,7 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
           field.name.toLowerCase().includes(query.trim().toLowerCase())
         )
       );
+      setActiveResultIndex(0);
     },
     [schemaFields]
   );
@@ -37,12 +47,38 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
     filterResultsDebounced(value);
   };
 
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  // Extra state, just to force another update, so that portal can render
-  // after input DOM ref is set
-  const [hasInputNode, setHasInputNode] = React.useState(false);
+  const onKeyDown = (key: string) => {
+    switch (key) {
+      case "Enter":
+        if (results.length > 0) {
+          onSelect(results[activeResultIndex]);
+        }
+        return;
+      case "ArrowDown":
+      case "Down":
+        if (results.length > 1) {
+          setActiveResultIndex((activeResultIndex + 1) % results.length);
+        }
+        return;
+      case "ArrowUp":
+      case "Up":
+        if (results.length > 1) {
+          setActiveResultIndex(
+            (activeResultIndex - 1 + results.length) % results.length
+          );
+        }
+        return;
+      case "Esc":
+      case "Escape":
+        setResultsShown(false);
+    }
+  };
+
   React.useEffect(() => {
     setHasInputNode(!!inputRef.current);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   }, [!!inputRef.current]);
 
   return (
@@ -54,13 +90,18 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
         value={query}
         placeholder="Search fields.."
         inputRef={inputRef}
+        onKeyDown={onKeyDown}
+        onBlur={onInputBlur}
+        onFocus={onInputFocus}
       />
       {inputRef.current &&
         ReactDOM.createPortal(
           <FieldSearchTypeaheadResults
+            shown={resultsShown}
             results={results}
+            activeResultIndex={activeResultIndex}
             left={inputRef.current.offsetLeft}
-            top={inputRef.current.offsetHeight + inputRef.current.offsetTop + 8}
+            top={inputRef.current.offsetHeight + inputRef.current.offsetTop + 5}
             onSelect={onSelect}
           />,
           appendTo
