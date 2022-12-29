@@ -5,9 +5,11 @@ import RemoveFilterButton from "./RemoveFilterButton";
 import Selector from "./components/Selector";
 import { MenuItem } from "./components/DropdownMenu";
 import FieldOperatorMappings from "./config/FieldOperatorMappings";
+import OperatorSelector from "./OperatorSelector";
 
 interface IFilterToken {
   filter: SimpleFilter<any>;
+  onUpdate: (newFilter: SimpleFilter<any>) => void;
   onDelete: () => void;
 }
 const Root = window.styled.div`
@@ -18,27 +20,20 @@ const Root = window.styled.div`
   }
 `;
 
-const AddedFilter: React.FC<IFilterToken> = ({ filter, onDelete }) => {
-  const opMenuItems = React.useMemo(
-    () =>
-      FieldOperatorMappings[filter.field.type].map((op) => ({
-        key: op,
-        label: OperatorType[op].toLowerCase().replace(/_/g, " "),
-      })),
-    []
-  );
-  const [opItem, setOpItem] = React.useState<MenuItem>(opMenuItems[0]);
+const AddedFilter: React.FC<IFilterToken> = ({
+  filter,
+  onDelete,
+  onUpdate,
+}) => {
   const valuesLabel = valuesList(filter.values);
   return (
     <Root>
       <Token round="left" label={filter.field.name} key="field" />
       <div style={{ width: 1 }} />
-      <Selector
-        label="Operator Selector"
-        items={opMenuItems}
-        selectedItem={opItem}
-        onSelect={setOpItem}
-        placeholder="Select Operator"
+      <OperatorSelector
+        fieldType={filter.field.type}
+        selectedOperator={filter.operator}
+        onChange={(op) => onUpdate({ ...filter, operator: op })}
       />
       <div style={{ width: 1 }} />
       <Token round="none" label={valuesLabel} key="value" />

@@ -33,6 +33,13 @@ const PowerSearch: React.FC<IPowerSearch> = ({ schema }) => {
   const deleteFilter = (filterID: string) => {
     setFilters(filters.filter((filter) => filter.id !== filterID));
   };
+  const updateFilter = (updatedFilter: SimpleFilter<any>) => {
+    setFilters(
+      filters.map((filter) =>
+        filter.id === updatedFilter.id ? updatedFilter : filter
+      )
+    );
+  };
 
   const rootRef = React.useRef<HTMLDivElement>(null);
   // Needed to force a second render so that typeahead can render
@@ -43,11 +50,12 @@ const PowerSearch: React.FC<IPowerSearch> = ({ schema }) => {
 
   return (
     <Root ref={rootRef}>
-      {filters.map((filter) => (
+      {filters.map((curFilter) => (
         <AddedFilter
-          key={filter.id}
-          filter={filter}
-          onDelete={() => deleteFilter(filter.id)}
+          key={curFilter.id}
+          filter={curFilter}
+          onUpdate={updateFilter}
+          onDelete={() => deleteFilter(curFilter.id)}
         />
       ))}
       {selectedField ? (
