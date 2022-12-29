@@ -27,10 +27,17 @@ const FilterValuesInput: React.FC<IFilterValuesInput> = ({ onDone }) => {
       value={value}
       onChange={setValue}
       placeholder="Filter values..."
-      //      onBlur={() => onDone([value])}
-      onKeyDown={(key) =>
-        key === "Enter" && !!value?.trim() ? onDone([value]) : undefined
+      onKeyDown={(e) =>
+        e.key === "Enter" && !!value?.trim() ? onDone([value]) : null
       }
+      onKeyUp={(e) => {
+        if (e.key == "Enter") {
+          if (!value?.trim() && ref.current) {
+            // This is to make sure contenteditable doesn't add empty <br>s and <div>s
+            ref.current.innerHTML = "";
+          }
+        }
+      }}
     />
   );
 };

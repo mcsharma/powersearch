@@ -1,6 +1,6 @@
 import { FieldType, OperatorType } from "../types";
 
-export default {
+const FieldOperatorMappings: { [key in FieldType]: Array<OperatorType> } = {
   [FieldType.BOOLEAN]: [OperatorType.IS],
   [FieldType.INTEGER]: [
     OperatorType.IS,
@@ -73,4 +73,8 @@ export default {
     OperatorType.CONTAINS_ALL_OF,
     OperatorType.CONTAINS_NONE_OF,
   ],
+  // Not supported yet, added to satisfy TypeScript
+  [FieldType.COMPOSITE]: [],
 };
+
+export default FieldOperatorMappings;

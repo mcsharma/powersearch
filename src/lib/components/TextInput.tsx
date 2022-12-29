@@ -13,9 +13,14 @@ interface ITextInput {
   placeholder?: string; // default '' (empty string)
   value: string;
   onChange: (value: string) => void;
-  onKeyDown?: (key: string) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
-  onBlur?: () => void;
+  onBlur?: (
+    event:
+      | React.FocusEvent<HTMLInputElement>
+      | React.FocusEvent<HTMLSpanElement>
+  ) => void;
   inputRef?:
     | React.RefObject<HTMLSpanElement>
     | React.RefObject<HTMLInputElement>;
@@ -126,12 +131,13 @@ const Input = window.styled.input.attrs(
 
 `;
 
-const TextInput: React.FC<ITextInput> = ({
+export default function TextInput({
   autoGrow,
   placeholder,
   value,
   onChange,
   onKeyDown,
+  onKeyUp,
   onFocus,
   onBlur,
   inputRef,
@@ -141,7 +147,7 @@ const TextInput: React.FC<ITextInput> = ({
   width = "auto",
   maxWidth,
   minWidth = 110,
-}) => {
+}: ITextInput) {
   if (autoGrow) {
     return (
       <SpanInput
@@ -158,11 +164,8 @@ const TextInput: React.FC<ITextInput> = ({
         onInput={(e: React.FormEvent<HTMLSpanElement>) =>
           onChange(e.currentTarget.textContent ?? "")
         }
-        onKeyDown={
-          onKeyDown
-            ? (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown(e.key)
-            : undefined
-        }
+        onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
         onBlur={onBlur}
         onFocus={onFocus}
       />
@@ -182,16 +185,11 @@ const TextInput: React.FC<ITextInput> = ({
       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
         onChange(e.target.value)
       }
-      onKeyDown={
-        onKeyDown
-          ? (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown(e.key)
-          : undefined
-      }
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
       onBlur={onBlur}
       onFocus={onFocus}
       ref={(inputRef as React.RefObject<HTMLInputElement>) ?? undefined}
     />
   );
 };
-
-export default TextInput;

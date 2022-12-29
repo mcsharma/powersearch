@@ -2,6 +2,9 @@ import { OperatorType, SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import RemoveFilterButton from "./RemoveFilterButton";
+import Selector from "./components/Selector";
+import { MenuItem } from "./components/DropdownMenu";
+import FieldOperatorMappings from "./config/FieldOperatorMappings";
 
 interface IFilterToken {
   filter: SimpleFilter<any>;
@@ -16,15 +19,26 @@ const Root = window.styled.div`
 `;
 
 const AddedFilter: React.FC<IFilterToken> = ({ filter, onDelete }) => {
-  const opLabel = OperatorType[filter.operator]
-    .toLowerCase()
-    .replace(/_/g, " ");
+  const opMenuItems = React.useMemo(
+    () =>
+      FieldOperatorMappings[filter.field.type].map((op) => ({
+        key: op,
+        label: OperatorType[op].toLowerCase().replace(/_/g, " "),
+      })),
+    []
+  );
+  const [opItem, setOpItem] = React.useState<MenuItem>(opMenuItems[0]);
   const valuesLabel = valuesList(filter.values);
   return (
     <Root>
       <Token round="left" label={filter.field.name} key="field" />
       <div style={{ width: 1 }} />
-      <Token round="none" label={opLabel} key="op" />
+      <Selector
+        label="Select Operator"
+        items={opMenuItems}
+        selectedItem={opItem}
+        onSelect={setOpItem}
+      />
       <div style={{ width: 1 }} />
       <Token round="none" label={valuesLabel} key="value" />
       <div style={{ width: 1 }} />

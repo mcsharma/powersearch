@@ -1,19 +1,17 @@
-import { Field, FieldBase, SimpleFilter } from "./types";
+import { FieldBase } from "./types";
 import * as React from "react";
-import Token from "./Token";
 import { schemaFields } from "../app/testSchema";
 import debounce from "./utils/debounce";
 import * as ReactDOM from "react-dom";
-import FieldSearchTypeaheadResults from "./FieldSearchTypeaheadResults";
 import TextInput from "./components/TextInput";
+import { getRandomString } from "./utils/random";
+import DropdownMenu, { MenuItem } from "./components/DropdownMenu";
 
 interface IFieldSearchTypeahead {
   onSelect: (field: FieldBase) => void;
-  appendTo: HTMLDivElement;
 }
 const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
   onSelect,
-  appendTo,
 }) => {
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<Array<FieldBase>>(schemaFields);
@@ -22,6 +20,7 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
   const onInputBlur = () => setResultsShown(false);
   const onInputFocus = () => setResultsShown(true);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const dropdownID = React.useMemo(() => getRandomString(), []);
   // Extra state, just to force another update, so that portal can render
   // after input DOM ref is set
   const [hasInputNode, setHasInputNode] = React.useState(false);
@@ -47,8 +46,8 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
     filterResultsDebounced(value);
   };
 
-  const onKeyDown = (key: string) => {
-    switch (key) {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    switch (event.key) {
       case "Enter":
         if (results.length > 0) {
           onSelect(results[activeResultIndex]);
@@ -74,12 +73,27 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
     }
   };
 
+  const onItemClick = (item: MenuItem) => {
+    const selectedField = results.find((result) => result.name === item.key);
+    if (selectedField) {
+      onSelect(selectedField);
+    }
+  };
+
+  const menuItems = React.useMemo(() => {
+    return results.map((result) => ({
+      label: result.name,
+      key: result.name,
+    }));
+  }, [results]);
+
   React.useEffect(() => {
     setHasInputNode(!!inputRef.current);
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [!!inputRef.current]);
+  const inputRect = inputRef.current?.getBoundingClientRect();
 
   return (
     <>
@@ -93,18 +107,21 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
         onKeyDown={onKeyDown}
         onBlur={onInputBlur}
         onFocus={onInputFocus}
+        aria-owns={dropdownID}
       />
       {inputRef.current &&
         ReactDOM.createPortal(
-          <FieldSearchTypeaheadResults
+          <DropdownMenu
+            left={inputRect?.left ?? 0}
+            top={(inputRect?.top ?? 0) + inputRef.current.clientHeight + 8}
+            id={dropdownID}
             shown={resultsShown}
-            results={results}
-            activeResultIndex={activeResultIndex}
-            left={inputRef.current.offsetLeft}
-            top={inputRef.current.offsetHeight + inputRef.current.offsetTop + 5}
-            onSelect={onSelect}
+            items={menuItems}
+            label="Field Selector"
+            onItemClick={onItemClick}
+            activeItemIndex={activeResultIndex}
           />,
-          appendTo
+          document.body
         )}
     </>
   );

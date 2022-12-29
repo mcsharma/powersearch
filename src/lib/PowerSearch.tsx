@@ -2,7 +2,7 @@ import * as React from "react";
 import DraftFilter from "./DraftFilter";
 import AddedFilter from "./AddedFilter";
 import FieldSearchTypeahead from "./FieldSearchTypeahead";
-import { Field, FieldBase, OperatorType, SimpleFilter } from "./types";
+import { FieldBase, SimpleFilter } from "./types";
 const styled = window.styled;
 
 const Root = styled.div`
@@ -57,10 +57,7 @@ const PowerSearch: React.FC<IPowerSearch> = ({ schema }) => {
           onRemove={() => setSelectedField(null)}
         />
       ) : rootRef.current ? (
-        <FieldSearchTypeahead
-          onSelect={setSelectedField}
-          appendTo={rootRef.current}
-        />
+        <FieldSearchTypeahead onSelect={setSelectedField} />
       ) : null}
     </Root>
   );
