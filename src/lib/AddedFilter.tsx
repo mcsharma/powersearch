@@ -34,10 +34,11 @@ const AddedFilter: React.FC<IFilterToken> = ({ filter, onDelete }) => {
       <Token round="left" label={filter.field.name} key="field" />
       <div style={{ width: 1 }} />
       <Selector
-        label="Select Operator"
+        label="Operator Selector"
         items={opMenuItems}
         selectedItem={opItem}
         onSelect={setOpItem}
+        placeholder="Select Operator"
       />
       <div style={{ width: 1 }} />
       <Token round="none" label={valuesLabel} key="value" />

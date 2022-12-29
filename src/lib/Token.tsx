@@ -1,15 +1,8 @@
-import { OperatorType, SimpleFilter } from "./types";
 import * as React from "react";
-import { TOKEN_BORDER_RADIUS, TOKEN_COLOR } from "./utils/constants";
+import { TOKEN_COLOR } from "./utils/constants";
+import { roundModeToBorderRadius } from "./utils/roundModeToBorderRadius";
+import { RoundMode } from "./utils/types";
 
-type RoundMode = "left" | "right" | "none" | "both";
-
-const roundModeToBorderRadius = {
-  left: `${TOKEN_BORDER_RADIUS}px 0 0 ${TOKEN_BORDER_RADIUS}px`,
-  right: `0 ${TOKEN_BORDER_RADIUS}px ${TOKEN_BORDER_RADIUS}px 0`,
-  none: "0",
-  both: `${TOKEN_BORDER_RADIUS}px`,
-};
 interface IToken {
   label: string;
   round: RoundMode;

@@ -2,10 +2,12 @@ import * as React from "react";
 import { getRandomString } from "../utils/random";
 import DropdownMenu, { MenuItem } from "./DropdownMenu";
 import * as ReactDOM from "react-dom";
+import { TOKEN_COLOR } from "../utils/constants";
+import Button from "./Button";
 
 interface ISelector {
   label: string;
-  placeholder?: string;
+  placeholder: string;
   items: Array<MenuItem>;
   selectedItem: MenuItem | null;
   onSelect: (item: MenuItem) => void;
@@ -72,15 +74,14 @@ export default function Selector({
 
   return (
     <>
-      <button
-        ref={buttonRef}
+      <Button
+        buttonRef={buttonRef}
         onClick={() => setMenuShown(!menuShown)}
-        aria-label={buttonLabel}
+        label={buttonLabel}
         onKeyDown={onKeyDown}
-        aria-owns={dropdownID}
-      >
-        {buttonLabel}
-      </button>
+        ownedIDs={[dropdownID]}
+        round="none"
+      />
       {ReactDOM.createPortal(
         <DropdownMenu
           left={buttonPosLeft ?? 0}
@@ -103,20 +104,16 @@ interface RootProps {
   top: number;
   shown: boolean;
 }
-const Root = window.styled.ul.attrs(({ left, top, shown }: RootProps) => ({
-  left,
-  top,
-  shown,
-}))`
-  display: ${({ shown }) => {
-    return shown ? undefined : "none";
-  }};
+const DropdownButton = window.styled.button`
+  border: none;
+  padding: 0 12px;
   box-sizing: border-box;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  box-shadow: 0  5px 10px rgba(154,160,185,0.05), 0 15px 40px rgba(166,173,201,0.2);
-  min-width: 240px;
-  background-color: white;
-  border-radius: 2px 2px 6px 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${TOKEN_COLOR};
+  flex-shrink: 0;
+  font-family: verdana;
+  font-size: 14px;
+  cursor: pointer;
 `;
