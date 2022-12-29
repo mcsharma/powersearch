@@ -1,6 +1,6 @@
 import * as React from "react";
 import { TOKEN_BORDER_RADIUS, TOKEN_COLOR } from "./utils/constants";
-import CrossIcon from "./icons/cross";
+import Icon from "./icons/Icon";
 
 interface IRemoveFilterButton {
   onClick: () => void;
@@ -19,7 +19,7 @@ const Root = window.styled.button`
 
 const RemoveFilterButton: React.FC<IRemoveFilterButton> = ({ onClick }) => (
   <Root onClick={() => onClick()} aria-label="Delete">
-    <CrossIcon />
+    <Icon name="cross" />
   </Root>
 );
 

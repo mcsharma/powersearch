@@ -1,13 +1,9 @@
 import * as React from "react";
-import { getRandomString } from "../utils/random";
 import { TOKEN_COLOR } from "../utils/constants";
 import { RoundMode } from "../utils/types";
 import { roundModeToBorderRadius } from "../utils/roundModeToBorderRadius";
+import Icon, { IconType } from "../icons/Icon";
 
-export interface MenuItem {
-  label: string;
-  key: string | number;
-}
 interface IButton {
   label: string;
   round: RoundMode;
@@ -15,6 +11,7 @@ interface IButton {
   onKeyDown: React.KeyboardEventHandler<HTMLButtonElement>;
   buttonRef: React.RefObject<HTMLButtonElement>;
   ownedIDs: Array<string>;
+  icon?: IconType;
 }
 
 export default function Button({
@@ -35,6 +32,7 @@ export default function Button({
       aria-owns={ownedIDs.join(" ")}
     >
       {label}
+      <Icon name="caret-down" margin="3px 0 0 4px" color={"#646464"} />
     </Root>
   );
 }
@@ -59,28 +57,8 @@ const Root = window.styled.button.attrs(({ round }: RootProps) => ({
   cursor: pointer;
 `;
 
-const ResultItem = window.styled.li.attrs(
-  ({ isSelected }: { isSelected: boolean }) => ({ isSelected })
-)`
-  box-sizing: border-box;
-  display: flex;
-  height: 32px;
-  align-items: center;
-  background-color: ${({ isSelected }) => {
-    return isSelected ? TOKEN_COLOR : "white";
-  }};
-  :hover {
-    background: ${TOKEN_COLOR};
+const ButtonIcon = window.styled(Icon)`
+  &svg {
+    margin: 3px 0 0 4px;
   }
-  &:first-child {
-    border-radius: 2px 2px 0 0;
-  }
-  &:last-child {
-    border-radius: 0 0 6px 6px;
-  }
-  cursor: pointer;
-`;
-
-const ResultItemDefaultRenderer = window.styled.div`
-  padding-left: 12px; 
 `;
