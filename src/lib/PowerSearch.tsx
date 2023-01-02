@@ -2,7 +2,8 @@ import * as React from "react";
 import DraftFilter from "./DraftFilter";
 import AddedFilter from "./AddedFilter";
 import FieldSearchTypeahead from "./FieldSearchTypeahead";
-import { FieldBase, SimpleFilter } from "./types";
+import { FieldBase, OperatorType, SimpleFilter } from "./types";
+import getDefaultFilterValues from "./utils/getDefaultFilterValues";
 const styled = window.styled;
 
 const Root = styled.div`
@@ -23,12 +24,20 @@ interface IPowerSearch {
 
 const PowerSearch: React.FC<IPowerSearch> = ({ schema }) => {
   const [filters, setFilters] = React.useState<Array<SimpleFilter<any>>>([]);
-  const [selectedField, setSelectedField] = React.useState<FieldBase | null>(
-    null
-  );
+  const [draftFilter, setDraftFilter] =
+    React.useState<SimpleFilter<any> | null>(null);
+
+  const onFieldSelect = (field: FieldBase) => {
+    setDraftFilter({
+      id: "draft",
+      field,
+      operator: OperatorType.IS,
+      values: getDefaultFilterValues(field.type, OperatorType.IS),
+    });
+  };
   const addFilter = (filter: SimpleFilter<any>) => {
     setFilters([...filters, filter]);
-    setSelectedField(null);
+    setDraftFilter(null);
   };
   const deleteFilter = (filterID: string) => {
     setFilters(filters.filter((filter) => filter.id !== filterID));
@@ -58,14 +67,15 @@ const PowerSearch: React.FC<IPowerSearch> = ({ schema }) => {
           onDelete={() => deleteFilter(curFilter.id)}
         />
       ))}
-      {selectedField ? (
+      {draftFilter ? (
         <DraftFilter
-          field={selectedField}
+          filter={draftFilter}
+          onUpdate={setDraftFilter}
           onDone={addFilter}
-          onRemove={() => setSelectedField(null)}
+          onRemove={() => setDraftFilter(null)}
         />
       ) : rootRef.current ? (
-        <FieldSearchTypeahead onSelect={setSelectedField} />
+        <FieldSearchTypeahead onSelect={onFieldSelect} />
       ) : null}
     </Root>
   );

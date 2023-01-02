@@ -1,21 +1,38 @@
-import { FieldBase, OperatorType, SimpleFilter } from "./types";
+import { FieldType, OperatorType } from "./types";
 import * as React from "react";
-import Token from "./Token";
 import TextInput from "./components/TextInput";
 import { TOKEN_COLOR } from "./utils/constants";
+import BooleanValueSelector from "./BooleanValueSelector";
 
 interface IFilterValuesInput {
+  fieldType: FieldType;
+  operatorType: OperatorType;
+  values: Array<any>;
+  onUpdate: (values: Array<any>) => void;
   onDone: (values: Array<any>) => void;
 }
 
-const FilterValuesInput: React.FC<IFilterValuesInput> = ({ onDone }) => {
-  const [value, setValue] = React.useState("");
+export default function FilterValuesInput({
+  fieldType,
+  values,
+  onUpdate,
+  onDone,
+}: IFilterValuesInput) {
   const ref = React.useRef<HTMLElement>(null);
-  React.useEffect(() => {
-    if (ref.current) {
-      ref.current.focus();
+
+  switch (fieldType) {
+    case FieldType.BOOLEAN: {
+      return (
+        <BooleanValueSelector
+          selectedValue={values[0]}
+          onSelect={(val) => {
+            onDone([val]);
+          }}
+        />
+      );
     }
-  }, []);
+    default:
+  }
 
   return (
     <TextInput
@@ -24,15 +41,17 @@ const FilterValuesInput: React.FC<IFilterValuesInput> = ({ onDone }) => {
       border="horizontal"
       borderColor={TOKEN_COLOR}
       autoGrow={true}
-      value={value}
-      onChange={setValue}
+      value={values[0]}
+      onChange={(value) => onUpdate([value])}
       placeholder="Filter values..."
       onKeyDown={(e) =>
-        e.key === "Enter" && !!value?.trim() ? onDone([value]) : null
+        e.key === "Enter" && !!values[0].trim()
+          ? onDone([values[0].trim()])
+          : null
       }
       onKeyUp={(e) => {
         if (e.key == "Enter") {
-          if (!value?.trim() && ref.current) {
+          if (values[0].trim() && ref.current) {
             // This is to make sure contenteditable doesn't add empty <br>s and <div>s
             ref.current.innerHTML = "";
           }
@@ -40,5 +59,4 @@ const FilterValuesInput: React.FC<IFilterValuesInput> = ({ onDone }) => {
       }}
     />
   );
-};
-export default FilterValuesInput;
+}

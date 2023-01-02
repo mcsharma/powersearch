@@ -148,6 +148,20 @@ export default function TextInput({
   maxWidth,
   minWidth = 110,
 }: ITextInput) {
+  const initialValue = React.useMemo(() => value, []);
+  React.useEffect(() => {
+    if (autoGrow) {
+      setEndOfContenteditable(inputRef?.current ?? null);
+    }
+  }, []);
+
+  // TODO: This is not working, not focussing on mount.
+  React.useEffect(() => {
+    if (inputRef?.current) {
+      inputRef.current.focus();
+    }
+  }, [!!inputRef?.current]);
+
   if (autoGrow) {
     return (
       <SpanInput
@@ -168,7 +182,9 @@ export default function TextInput({
         onKeyUp={onKeyUp}
         onBlur={onBlur}
         onFocus={onFocus}
-      />
+      >
+        {initialValue}
+      </SpanInput>
     );
   }
   return (
@@ -192,4 +208,19 @@ export default function TextInput({
       ref={(inputRef as React.RefObject<HTMLInputElement>) ?? undefined}
     />
   );
-};
+}
+
+function setEndOfContenteditable(
+  contentEditableElement: HTMLSpanElement | null
+) {
+  let range, selection;
+  if (document.createRange && contentEditableElement) {
+    //Firefox, Chrome, Opera, Safari, IE 9+
+    range = document.createRange(); //Create a range (a range is a like the selection but invisible)
+    range.selectNodeContents(contentEditableElement); //Select the entire contents of the element with the range
+    range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
+    selection = window.getSelection(); //get the selection object (allows you to change selection)
+    selection?.removeAllRanges(); //remove any selections already made
+    selection?.addRange(range); //make the range you have just created the visible selection
+  }
+}

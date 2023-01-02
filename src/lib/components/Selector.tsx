@@ -4,6 +4,7 @@ import DropdownMenu, { MenuItem } from "./DropdownMenu";
 import * as ReactDOM from "react-dom";
 import { TOKEN_COLOR } from "../utils/constants";
 import Button from "./Button";
+import useForceRenderAfterMount from "../utils/useForceRenderAfterMount";
 
 interface ISelector {
   label: string;
@@ -11,6 +12,7 @@ interface ISelector {
   items: Array<MenuItem>;
   selectedItem: MenuItem | null;
   onSelect: (item: MenuItem) => void;
+  expandOnMount?: boolean;
 }
 
 export default function Selector({
@@ -19,9 +21,10 @@ export default function Selector({
   items,
   selectedItem,
   onSelect,
+  expandOnMount,
 }: ISelector) {
   const dropdownID = React.useMemo(() => getRandomString(), []);
-  const [menuShown, setMenuShown] = React.useState(false);
+  const [menuShown, setMenuShown] = React.useState(expandOnMount ?? false);
   const [activeItemIndex, setActiveItemIndex] = React.useState<number | null>(
     null
   );
@@ -71,6 +74,8 @@ export default function Selector({
   const buttonClientRect = buttonRef.current?.getBoundingClientRect();
   const { left: buttonPosLeft, bottom: buttonPosBottom } =
     buttonClientRect ?? {};
+
+  useForceRenderAfterMount();
 
   return (
     <>

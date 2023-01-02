@@ -6,6 +6,8 @@ import Selector from "./components/Selector";
 import { MenuItem } from "./components/DropdownMenu";
 import FieldOperatorMappings from "./config/FieldOperatorMappings";
 import OperatorSelector from "./OperatorSelector";
+import FilterValuesInput from "./FilterValuesInput";
+import Button from "./components/Button";
 
 interface IFilterToken {
   filter: SimpleFilter<any>;
@@ -26,6 +28,7 @@ const AddedFilter: React.FC<IFilterToken> = ({
   onUpdate,
 }) => {
   const valuesLabel = valuesList(filter.values);
+  const [isEditing, setIsEditing] = React.useState(false);
   return (
     <Root>
       <Token round="left" label={filter.field.name} key="field" />
@@ -36,7 +39,24 @@ const AddedFilter: React.FC<IFilterToken> = ({
         onChange={(op) => onUpdate({ ...filter, operator: op })}
       />
       <div style={{ width: 1 }} />
-      <Token round="none" label={valuesLabel} key="value" />
+      {isEditing ? (
+        <FilterValuesInput
+          fieldType={filter.field.type}
+          operatorType={filter.operator}
+          values={filter.values}
+          onUpdate={(values) => onUpdate({ ...filter, values })}
+          onDone={(values) => {
+            onUpdate({ ...filter, values });
+            setIsEditing(false);
+          }}
+        />
+      ) : (
+        <Button
+          label={valuesLabel}
+          onClick={() => setIsEditing(true)}
+          round="none"
+        />
+      )}
       <div style={{ width: 1 }} />
       <RemoveFilterButton onClick={onDelete} />
     </Root>

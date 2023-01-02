@@ -6,11 +6,11 @@ import Icon, { IconType } from "../icons/Icon";
 
 interface IButton {
   label: string;
-  round: RoundMode;
-  onClick: () => void;
-  onKeyDown: React.KeyboardEventHandler<HTMLButtonElement>;
-  buttonRef: React.RefObject<HTMLButtonElement>;
-  ownedIDs: Array<string>;
+  round?: RoundMode;
+  onClick?: () => void;
+  onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
+  buttonRef?: React.RefObject<HTMLButtonElement>;
+  ownedIDs?: Array<string>;
   icon?: IconType;
 }
 
@@ -29,7 +29,7 @@ export default function Button({
       aria-label={label}
       onClick={onClick}
       round={round}
-      aria-owns={ownedIDs.join(" ")}
+      aria-owns={ownedIDs ? ownedIDs.join(" ") : undefined}
     >
       {label}
       <Icon name="caret-down" margin="3px 0 0 4px" color={"#646464"} />
@@ -38,13 +38,13 @@ export default function Button({
 }
 
 interface RootProps {
-  round: RoundMode;
+  round?: RoundMode;
 }
 const Root = window.styled.button.attrs(({ round }: RootProps) => ({
   round,
 }))`
   border: none;
-  border-radius: ${({ round }) => roundModeToBorderRadius[round]};
+  border-radius: ${({ round }) => roundModeToBorderRadius[round ?? "both"]};
   padding: 0 12px;
   box-sizing: border-box;
   display: flex;
