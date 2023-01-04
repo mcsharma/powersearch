@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MenuItem } from "./components/DropdownMenu";
+import { MenuItem } from "./components/DropdownMenuBase";
 import Selector from "./components/Selector";
 import FieldOperatorMappings from "./config/FieldOperatorMappings";
 import { FieldType, OperatorType } from "./types";
@@ -38,6 +38,7 @@ export default function OperatorSelector({
       selectedItem={selectedItem}
       onSelect={onSelect}
       placeholder="Select Operator"
+      withSearch={false}
     />
   );
 }

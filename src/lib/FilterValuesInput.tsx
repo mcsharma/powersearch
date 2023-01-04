@@ -1,11 +1,13 @@
-import { FieldType, OperatorType } from "./types";
+import { FieldBase, FieldType, OperatorType } from "./types";
 import * as React from "react";
 import TextInput from "./components/TextInput";
 import { TOKEN_COLOR } from "./utils/constants";
 import BooleanValueSelector from "./BooleanValueSelector";
+import valuesList from "./utils/valuesList";
+import Token from "./Token";
 
 interface IFilterValuesInput {
-  fieldType: FieldType;
+  field: FieldBase;
   operatorType: OperatorType;
   values: Array<any>;
   onUpdate: (values: Array<any>) => void;
@@ -13,14 +15,14 @@ interface IFilterValuesInput {
 }
 
 export default function FilterValuesInput({
-  fieldType,
+  field,
   values,
   onUpdate,
   onDone,
 }: IFilterValuesInput) {
   const ref = React.useRef<HTMLElement>(null);
 
-  switch (fieldType) {
+  switch (field.type) {
     case FieldType.BOOLEAN: {
       return (
         <BooleanValueSelector

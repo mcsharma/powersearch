@@ -1,10 +1,12 @@
 import * as React from "react";
 import { getRandomString } from "../utils/random";
-import DropdownMenu, { MenuItem } from "./DropdownMenu";
-import * as ReactDOM from "react-dom";
 import { TOKEN_COLOR } from "../utils/constants";
 import Button from "./Button";
 import useForceRenderAfterMount from "../utils/useForceRenderAfterMount";
+import { MenuItem, MenuItemKey } from "./DropdownMenuBase";
+import DropdownMenu from "./DropdownMenuWithoutSearch";
+import DropdownMenuWithSearch from "./DropdownMenuWithSearch";
+import DropdownMenuWithoutSearch from "./DropdownMenuWithoutSearch";
 
 interface ISelector {
   label: string;
@@ -12,6 +14,8 @@ interface ISelector {
   items: Array<MenuItem>;
   selectedItem: MenuItem | null;
   onSelect: (item: MenuItem) => void;
+  // Optional Props *********
+  withSearch?: boolean;
   expandOnMount?: boolean;
 }
 
@@ -21,56 +25,101 @@ export default function Selector({
   items,
   selectedItem,
   onSelect,
+  withSearch,
   expandOnMount,
 }: ISelector) {
   const dropdownID = React.useMemo(() => getRandomString(), []);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+
   const [menuShown, setMenuShown] = React.useState(expandOnMount ?? false);
+  // Used only for search based use case
+  const [focusMode, setFocusMode] = React.useState<"input" | "dropdown">(
+    "input"
+  );
+  // Used only for non-search based use case.
   const [activeItemIndex, setActiveItemIndex] = React.useState<number | null>(
     null
   );
 
+  function closeMenu() {
+    setMenuShown(false);
+    setFocusMode("input");
+    setActiveItemIndex(null);
+  }
+  function openMenu() {
+    console.log(menuShown, activeItemIndex, focusMode);
+    setMenuShown(true);
+  }
+
   const onItemClick = (item: MenuItem) => {
     onSelect(item);
-    setMenuShown(false);
+    closeMenu();
+  };
+
+  React.useEffect(() => {
+    if (withSearch && focusMode === "input") {
+      if (menuShown) {
+        buttonRef.current?.focus();
+      }
+    }
+  }, [focusMode]);
+
+  const onClick = () => {
+    if (!menuShown) {
+      openMenu();
+      return;
+    }
+    if (activeItemIndex !== null) {
+      onItemClick(items[activeItemIndex]);
+    } else {
+      closeMenu();
+    }
   };
   const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
     switch (event.key) {
       case "Enter":
-        if (menuShown && activeItemIndex !== null) {
-          onSelect(items[activeItemIndex]);
-        }
+        // Pressing enter triggers onClick, no need to handle it here.
         return;
       case "ArrowDown":
       case "Down":
-        if (items.length == 0) {
+        console.log("arrow down on input..");
+        if (!menuShown) {
+          openMenu();
           return;
         }
-        if (activeItemIndex === null) {
-          return setActiveItemIndex(0);
+        if (withSearch) {
+          setFocusMode("dropdown");
+        } else {
+          if (items.length > 0) {
+            setActiveItemIndex(
+              activeItemIndex === null
+                ? 0
+                : (activeItemIndex + 1) % items.length
+            );
+          }
         }
-        return setActiveItemIndex(
-          Math.min(activeItemIndex + 1, items.length - 1)
-        );
+        return;
       case "ArrowUp":
       case "Up":
-        if (items.length == 0) {
-          return;
+        console.log("arrow up on input..");
+        if (menuShown && !withSearch) {
+          if (items.length > 0) {
+            setActiveItemIndex(
+              ((activeItemIndex ?? 0) + items.length - 1) % items.length
+            );
+          }
         }
-        if (activeItemIndex === null) {
-          return setActiveItemIndex(items.length - 1);
-        }
-        if (activeItemIndex === 0) {
-          return setActiveItemIndex(null);
-        }
-        return setActiveItemIndex(activeItemIndex - 1);
+        return;
       case "Esc":
       case "Escape":
-        return setMenuShown(false);
+        if (menuShown) {
+          closeMenu();
+        }
+        return;
     }
   };
 
   const buttonLabel = selectedItem === null ? placeholder : selectedItem.label;
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
   const buttonClientRect = buttonRef.current?.getBoundingClientRect();
   const { left: buttonPosLeft, bottom: buttonPosBottom } =
     buttonClientRect ?? {};
@@ -80,45 +129,39 @@ export default function Selector({
   return (
     <>
       <Button
-        buttonRef={buttonRef}
-        onClick={() => setMenuShown(!menuShown)}
+        buttonRef={buttonRef as React.RefObject<HTMLButtonElement>}
+        onClick={onClick}
         label={buttonLabel}
         onKeyDown={onKeyDown}
         ownedIDs={[dropdownID]}
         round="none"
       />
-      {ReactDOM.createPortal(
-        <DropdownMenu
-          left={buttonPosLeft ?? 0}
-          top={(buttonPosBottom ?? 0) + 5}
+      {withSearch ? (
+        <DropdownMenuWithSearch
           id={dropdownID}
           shown={menuShown}
+          top={(buttonPosBottom ?? 0) + 5}
+          left={buttonPosLeft ?? 0}
           label={label}
           items={items}
           onItemClick={onItemClick}
-          activeItemIndex={activeItemIndex}
-        />,
-        document.body
+          focusMode={focusMode}
+          setFocusMode={setFocusMode}
+        />
+      ) : (
+        <DropdownMenuWithoutSearch
+          shown={menuShown}
+          id={dropdownID}
+          top={(buttonPosBottom ?? 0) + 5}
+          left={buttonPosLeft ?? 0}
+          label={label}
+          items={items}
+          onItemClick={onItemClick}
+          activeItemKey={
+            activeItemIndex === null ? null : items[activeItemIndex].key
+          }
+        />
       )}
     </>
   );
 }
-
-interface RootProps {
-  left: number;
-  top: number;
-  shown: boolean;
-}
-const DropdownButton = window.styled.button`
-  border: none;
-  padding: 0 12px;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${TOKEN_COLOR};
-  flex-shrink: 0;
-  font-family: verdana;
-  font-size: 14px;
-  cursor: pointer;
-`;

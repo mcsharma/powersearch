@@ -1,13 +1,11 @@
-import { OperatorType, SimpleFilter } from "./types";
+import { SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import RemoveFilterButton from "./RemoveFilterButton";
-import Selector from "./components/Selector";
-import { MenuItem } from "./components/DropdownMenu";
-import FieldOperatorMappings from "./config/FieldOperatorMappings";
 import OperatorSelector from "./OperatorSelector";
 import FilterValuesInput from "./FilterValuesInput";
 import Button from "./components/Button";
+import valuesList from "./utils/valuesList";
 
 interface IFilterToken {
   filter: SimpleFilter<any>;
@@ -41,7 +39,7 @@ const AddedFilter: React.FC<IFilterToken> = ({
       <div style={{ width: 1 }} />
       {isEditing ? (
         <FilterValuesInput
-          fieldType={filter.field.type}
+          field={filter.field}
           operatorType={filter.operator}
           values={filter.values}
           onUpdate={(values) => onUpdate({ ...filter, values })}
@@ -64,10 +62,3 @@ const AddedFilter: React.FC<IFilterToken> = ({
 };
 
 export default AddedFilter;
-
-const valuesList = (values: Array<any>): string => {
-  if (values.length < 3) {
-    return values.join(", ");
-  }
-  return `${values[0]} and ${values.length - 1} other values`;
-};

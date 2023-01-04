@@ -1,13 +1,11 @@
-import { FieldBase, OperatorType, SimpleFilter } from "./types";
+import { OperatorType, SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import FilterValuesInput from "./FilterValuesInput";
 import { getRandomString } from "./utils/random";
 import RemoveFilterButton from "./RemoveFilterButton";
-import Selector from "./components/Selector";
 import FieldOperatorMappings from "./config/FieldOperatorMappings";
-import { MenuItem } from "./components/DropdownMenu";
-import getDefaultFilterValues from "./utils/getDefaultFilterValues";
+import OperatorSelector from "./OperatorSelector";
 
 const Root = window.styled.div`
   display: flex;
@@ -61,17 +59,13 @@ const DraftFilter: React.FC<IActiveFilter> = ({
     <Root>
       <Token round="left" label={filter.field.name} />
       <div style={{ width: 1 }} />
-      <Selector
-        label="Operator Selector"
-        items={opMenuItems}
-        selectedItem={selectedOpItem}
-        onSelect={(item) =>
-          onUpdate({ ...filter, operator: item.key as OperatorType })
-        }
-        placeholder="Select Operator"
+      <OperatorSelector
+        fieldType={filter.field.type}
+        selectedOperator={filter.operator}
+        onChange={(operator) => onUpdate({ ...filter, operator })}
       />
       <FilterValuesInput
-        fieldType={filter.field.type}
+        field={filter.field}
         operatorType={filter.operator}
         values={filter.values}
         onUpdate={(values) => onUpdate({ ...filter, values })}

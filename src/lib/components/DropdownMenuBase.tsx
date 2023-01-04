@@ -6,58 +6,49 @@ export interface MenuItem {
   label: string;
   key: string | number;
 }
-interface IDrodownMenu {
+export type MenuItemKey = string | number;
+
+export interface IDropdownMenuBase {
   id: string;
-  shown: boolean;
   label: string;
-  left: number;
-  top: number;
   items: Array<MenuItem>;
+  activeItemKey?: MenuItemKey | null;
   onItemClick: (item: MenuItem) => void;
-  activeItemIndex: number | null;
   itemRenderer?: (item: MenuItem) => React.ReactNode;
 }
 
-export default function DropdownMenu({
+export default function DropdownMenuBase({
   id,
-  shown,
   label,
-  left,
-  top,
   items,
-  activeItemIndex,
+  activeItemKey,
   onItemClick,
   itemRenderer,
-}: IDrodownMenu) {
+}: IDropdownMenuBase) {
   const itemsWithIDs = React.useMemo(() => {
     return items.map((item) => ({ ...item, __id: getRandomString() }));
   }, [items]);
 
   return (
     <Root
-      shown={shown}
       role="listbox"
       id={id}
-      left={left}
-      top={top}
       aria-activedescendant={
-        activeItemIndex !== null
-          ? itemsWithIDs[activeItemIndex]?.__id
-          : undefined
+        itemsWithIDs.find((item) => item.key === activeItemKey)?.__id
       }
       aria-label={label}
     >
       {itemsWithIDs.map((item, index) => {
         return (
           <ResultItem
-            key={item.__id}
+            key={item.key}
             // Using mousedown instead of onClick because typeahead input's blur is called
             // before this item onClick and hiding this menu before onClick is executed.
             onMouseDown={() => onItemClick(item)}
             role="option"
             id={item.__id}
-            isSelected={index === activeItemIndex}
-            aria-selected={index === activeItemIndex}
+            isSelected={activeItemKey === item.key}
+            aria-selected={activeItemKey === item.key}
           >
             {itemRenderer ? (
               itemRenderer(item)
@@ -73,30 +64,13 @@ export default function DropdownMenu({
   );
 }
 
-interface RootProps {
-  left: number;
-  top: number;
-  shown: boolean;
-}
-const Root = window.styled.ul.attrs(({ left, top, shown }: RootProps) => ({
-  left,
-  top,
-  shown,
-}))`
-  display: ${({ shown }) => {
-    return shown ? undefined : "none";
-  }};
-  left: ${({ left }) => left}px;
-  top: ${({ top }) => top}px;
+const Root = window.styled.ul`
   box-sizing: border-box;
   list-style: none;
   padding: 0;
   margin: 0;
-  box-shadow: 0  5px 10px rgba(154,160,185,0.05), 0 15px 40px rgba(166,173,201,0.2);
   min-width: 240px;
-  background-color: white;
   border-radius: 2px 2px 6px 6px;
-  position: absolute;
 `;
 
 const ResultItem = window.styled.li.attrs(
@@ -110,7 +84,7 @@ const ResultItem = window.styled.li.attrs(
     return isSelected ? TOKEN_COLOR : "white";
   }};
   :hover {
-    background: ${TOKEN_COLOR};
+    background-color: ${TOKEN_COLOR};
   }
   &:first-child {
     border-radius: 2px 2px 0 0;
