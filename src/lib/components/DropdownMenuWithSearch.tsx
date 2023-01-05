@@ -1,11 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { getRandomString } from "../utils/random";
-import { TOKEN_COLOR } from "../utils/constants";
 import DropdownMenuBase, {
   IDropdownMenuBase,
   MenuItem,
-  MenuItemKey,
 } from "./DropdownMenuBase";
 
 interface IDropdownMenuWithSearch
@@ -36,45 +34,32 @@ export default function DropdownMenuWithSearch({
   const [query, setQuery] = React.useState("");
   const [searchResults, setSearchResults] =
     React.useState<Array<MenuItem>>(items);
-  const [activeItemIndex, setActiveItemIndex] = React.useState<number | null>(
-    null
-  );
+  const [activeItemIndex, setActiveItemIndex] = React.useState<number>(-1);
 
   const onQueryChange = (q: string) => {
     setQuery(q);
     const newResults = items.filter((item) => item.label.includes(q.trim()));
     setSearchResults(newResults);
-    setActiveItemIndex(newResults.length > 0 ? 0 : null);
+    setActiveItemIndex(newResults.length > 0 ? 0 : -1);
   };
 
   const onSearchKeyDown = (key: string) => {
     switch (key) {
       case "Enter":
-        if (activeItemIndex !== null && searchResults[activeItemIndex]) {
+        if (searchResults[activeItemIndex]) {
           onItemClick(searchResults[activeItemIndex]);
         }
         return;
       case "ArrowDown":
       case "Down":
-        console.log("arrow down on dropdown..");
-        if (searchResults.length === 0) {
-          return;
-        }
         setActiveItemIndex(
-          activeItemIndex === null
-            ? 0
-            : Math.min(activeItemIndex + 1, searchResults.length - 1)
+          Math.min(activeItemIndex + 1, searchResults.length - 1)
         );
         return;
       case "ArrowUp":
       case "Up":
-        console.log("arrow up on dropdown..");
-        if (activeItemIndex === null) {
+        if (activeItemIndex < 0) {
           setFocusMode("input");
-          return;
-        }
-        if (activeItemIndex === 0) {
-          setActiveItemIndex(null);
           return;
         }
         setActiveItemIndex(activeItemIndex - 1);
@@ -91,11 +76,10 @@ export default function DropdownMenuWithSearch({
     if (!shown) {
       setQuery("");
       setSearchResults(items);
-      setActiveItemIndex(null);
+      setActiveItemIndex(-1);
     }
   }, [shown]);
 
-  console.log(activeItemIndex);
   return ReactDOM.createPortal(
     <Root shown={shown} left={left} top={top}>
       <SearchInput
@@ -109,11 +93,7 @@ export default function DropdownMenuWithSearch({
       />
       <DropdownMenuBase
         items={searchResults}
-        activeItemKey={
-          activeItemIndex === null
-            ? null
-            : searchResults[activeItemIndex]?.key ?? null
-        }
+        activeItemKey={searchResults[activeItemIndex]?.key ?? null}
         onItemClick={onItemClick}
         {...remainingProps}
       />

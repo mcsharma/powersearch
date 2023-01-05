@@ -1,10 +1,8 @@
 import * as React from "react";
 import { getRandomString } from "../utils/random";
-import { TOKEN_COLOR } from "../utils/constants";
 import Button from "./Button";
 import useForceRenderAfterMount from "../utils/useForceRenderAfterMount";
-import { MenuItem, MenuItemKey } from "./DropdownMenuBase";
-import DropdownMenu from "./DropdownMenuWithoutSearch";
+import { MenuItem } from "./DropdownMenuBase";
 import DropdownMenuWithSearch from "./DropdownMenuWithSearch";
 import DropdownMenuWithoutSearch from "./DropdownMenuWithoutSearch";
 
@@ -40,22 +38,18 @@ export default function Selector({
     (item) => item.key === selectedItem?.key
   );
   // Used only for non-search based use case.
-  const [activeItemIndex, setActiveItemIndex] = React.useState<number | null>(
-    null
-  );
+  const [activeItemIndex, setActiveItemIndex] = React.useState<number>(-1);
 
   function closeMenu() {
     setMenuShown(false);
-    setFocusMode("input");
-    setActiveItemIndex(null);
+    if (withSearch) {
+      setFocusMode("input");
+    } else {
+      setActiveItemIndex(-1);
+    }
   }
   function openMenu() {
-    if (!menuShown) {
-      setMenuShown(true);
-      if (selectedItemIndex !== -1) {
-        setActiveItemIndex(selectedItemIndex);
-      }
-    }
+    setMenuShown(true);
   }
   const onItemClick = (item: MenuItem) => {
     onSelect(item);
@@ -75,7 +69,7 @@ export default function Selector({
       openMenu();
       return;
     }
-    if (activeItemIndex !== null) {
+    if (!withSearch) {
       onItemClick(items[activeItemIndex]);
     } else {
       closeMenu();
@@ -95,21 +89,27 @@ export default function Selector({
         if (withSearch) {
           setFocusMode("dropdown");
         } else {
-          if (items.length > 0) {
-            setActiveItemIndex(
-              activeItemIndex === null
-                ? 0
-                : (activeItemIndex + 1) % items.length
-            );
+          if (items.length === 0) {
+            return;
+          }
+          if (activeItemIndex === -1 && selectedItemIndex !== -1) {
+            setActiveItemIndex(selectedItemIndex);
+          } else {
+            setActiveItemIndex((activeItemIndex + 1) % items.length);
           }
         }
         return;
       case "ArrowUp":
       case "Up":
-        if (menuShown && !withSearch) {
-          if (items.length > 0) {
+        if (!menuShown) {
+          return;
+        }
+        if (!withSearch && items.length > 0) {
+          if (activeItemIndex === -1) {
+            setActiveItemIndex(items.length - 1);
+          } else {
             setActiveItemIndex(
-              ((activeItemIndex ?? 0) + items.length - 1) % items.length
+              (activeItemIndex - 1 + items.length) % items.length
             );
           }
         }
