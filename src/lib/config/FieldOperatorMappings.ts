@@ -11,8 +11,6 @@ const FieldOperatorMappings: { [key in FieldType]: Array<OperatorType> } = {
     OperatorType.IS_GREATER_THAN,
     OperatorType.IS_GREATER_THAN_OR_EQUAL,
     OperatorType.IS_BETWEEN,
-    OperatorType.IS_ANY_OF,
-    OperatorType.IS_NONE_OF,
   ],
   [FieldType.FLOAT]: [
     OperatorType.IS,
@@ -22,14 +20,10 @@ const FieldOperatorMappings: { [key in FieldType]: Array<OperatorType> } = {
     OperatorType.IS_GREATER_THAN,
     OperatorType.IS_GREATER_THAN_OR_EQUAL,
     OperatorType.IS_BETWEEN,
-    OperatorType.IS_ANY_OF,
-    OperatorType.IS_NONE_OF,
   ],
   [FieldType.STRING_ENUM]: [
     OperatorType.IS,
     OperatorType.IS_NOT,
-    OperatorType.IS_ANY_OF,
-    OperatorType.IS_NONE_OF,
     OperatorType.CONTAINS,
     OperatorType.NOT_CONTAINS,
     OperatorType.STARTS_WITH,
@@ -40,8 +34,6 @@ const FieldOperatorMappings: { [key in FieldType]: Array<OperatorType> } = {
   [FieldType.TEXT]: [
     OperatorType.IS,
     OperatorType.IS_NOT,
-    OperatorType.IS_ANY_OF,
-    OperatorType.IS_NONE_OF,
     OperatorType.CONTAINS,
     OperatorType.NOT_CONTAINS,
     OperatorType.STARTS_WITH,
@@ -52,8 +44,6 @@ const FieldOperatorMappings: { [key in FieldType]: Array<OperatorType> } = {
   [FieldType.DATE]: [
     OperatorType.IS,
     OperatorType.IS_NOT,
-    OperatorType.IS_ANY_OF,
-    OperatorType.IS_NONE_OF,
     OperatorType.IS_LESS_THAN,
     OperatorType.IS_LESS_THAN_OR_EQUAL,
     OperatorType.IS_GREATER_THAN,
@@ -69,9 +59,9 @@ const FieldOperatorMappings: { [key in FieldType]: Array<OperatorType> } = {
   ],
 
   [FieldType.ARRAY]: [
+    OperatorType.CONTAINS,
     OperatorType.CONTAINS_ANY_OF,
     OperatorType.CONTAINS_ALL_OF,
-    OperatorType.CONTAINS_NONE_OF,
   ],
   // Not supported yet, added to satisfy TypeScript
   [FieldType.COMPOSITE]: [],

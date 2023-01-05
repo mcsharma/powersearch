@@ -24,11 +24,8 @@ export enum OperatorType {
   NOT_STARTS_WITH,
   ENDS_WITH,
   NOT_ENDS_WITH,
-  IS_ANY_OF,
-  IS_NONE_OF,
   CONTAINS_ANY_OF,
   CONTAINS_ALL_OF,
-  CONTAINS_NONE_OF,
 }
 
 export enum FilterType {
