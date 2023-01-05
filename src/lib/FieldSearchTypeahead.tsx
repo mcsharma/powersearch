@@ -120,6 +120,10 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
           items={menuItems}
           onItemClick={onItemClick}
           activeItemKey={results[activeItemIndex]?.name ?? null}
+          // null becase once you select an element, this component
+          // (field search typeahead) disappears. So we'll never need to show
+          // it in selected state.
+          selectedItemKey={null}
         />
       )}
     </>

@@ -12,7 +12,11 @@ export interface IDropdownMenuBase {
   id: string;
   label: string;
   items: Array<MenuItem>;
-  activeItemKey?: MenuItemKey | null;
+  // item that's currently active, which is what
+  // get selected if user press enter
+  activeItemKey: MenuItemKey | null;
+  // Item that's currenly chosen
+  selectedItemKey: MenuItemKey | null;
   onItemClick: (item: MenuItem) => void;
   itemRenderer?: (item: MenuItem) => React.ReactNode;
 }
@@ -22,6 +26,7 @@ export default function DropdownMenuBase({
   label,
   items,
   activeItemKey,
+  selectedItemKey,
   onItemClick,
   itemRenderer,
 }: IDropdownMenuBase) {
@@ -29,16 +34,23 @@ export default function DropdownMenuBase({
     return items.map((item) => ({ ...item, __id: getRandomString() }));
   }, [items]);
 
+  const activeItem =
+    itemsWithIDs.find((item) => item.key === activeItemKey) ?? null;
+  const selectedItem =
+    itemsWithIDs.find((item) => item.key === selectedItemKey) ?? null;
+
   return (
     <Root
       role="listbox"
       id={id}
       aria-activedescendant={
-        itemsWithIDs.find((item) => item.key === activeItemKey)?.__id
+        selectedItem === null ? undefined : selectedItem.__id
       }
       aria-label={label}
     >
-      {itemsWithIDs.map((item, index) => {
+      {itemsWithIDs.map((item) => {
+        const isActive = item.key === activeItemKey;
+        const isSelected = item.key === selectedItemKey;
         return (
           <ResultItem
             key={item.key}
@@ -47,13 +59,18 @@ export default function DropdownMenuBase({
             onMouseDown={() => onItemClick(item)}
             role="option"
             id={item.__id}
-            isSelected={activeItemKey === item.key}
-            aria-selected={activeItemKey === item.key}
+            isActive={isActive}
+            aria-selected={isActive}
           >
             {itemRenderer ? (
               itemRenderer(item)
             ) : (
               <ResultItemDefaultRenderer>
+                <IconWrapper>
+                  {isSelected ? (
+                    <img src="assets/check.svg" alt="checkmark" />
+                  ) : null}
+                </IconWrapper>
                 {item.label}
               </ResultItemDefaultRenderer>
             )}
@@ -74,14 +91,14 @@ const Root = window.styled.ul`
 `;
 
 const ResultItem = window.styled.li.attrs(
-  ({ isSelected }: { isSelected: boolean }) => ({ isSelected })
+  ({ isActive }: { isActive: boolean }) => ({ isActive })
 )`
   box-sizing: border-box;
   display: flex;
   height: 32px;
   align-items: center;
-  background-color: ${({ isSelected }) => {
-    return isSelected ? TOKEN_COLOR : "white";
+  background-color: ${({ isActive }) => {
+    return isActive ? TOKEN_COLOR : "white";
   }};
   :hover {
     background-color: ${TOKEN_COLOR};
@@ -96,5 +113,12 @@ const ResultItem = window.styled.li.attrs(
 `;
 
 const ResultItemDefaultRenderer = window.styled.div`
-  padding-left: 12px; 
+  display: flex;
+`;
+
+const IconWrapper = window.styled.div`
+  width: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

@@ -8,7 +8,8 @@ import DropdownMenuBase, {
   MenuItemKey,
 } from "./DropdownMenuBase";
 
-interface IDropdownMenuWithSearch extends IDropdownMenuBase {
+interface IDropdownMenuWithSearch
+  extends Omit<IDropdownMenuBase, "activeItemKey"> {
   shown: boolean;
   top: number;
   left: number;
@@ -109,7 +110,9 @@ export default function DropdownMenuWithSearch({
       <DropdownMenuBase
         items={searchResults}
         activeItemKey={
-          activeItemIndex === null ? null : searchResults[activeItemIndex].key
+          activeItemIndex === null
+            ? null
+            : searchResults[activeItemIndex]?.key ?? null
         }
         onItemClick={onItemClick}
         {...remainingProps}

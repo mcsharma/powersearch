@@ -36,6 +36,9 @@ export default function Selector({
   const [focusMode, setFocusMode] = React.useState<"input" | "dropdown">(
     "input"
   );
+  const selectedItemIndex = items.findIndex(
+    (item) => item.key === selectedItem?.key
+  );
   // Used only for non-search based use case.
   const [activeItemIndex, setActiveItemIndex] = React.useState<number | null>(
     null
@@ -47,10 +50,13 @@ export default function Selector({
     setActiveItemIndex(null);
   }
   function openMenu() {
-    console.log(menuShown, activeItemIndex, focusMode);
-    setMenuShown(true);
+    if (!menuShown) {
+      setMenuShown(true);
+      if (selectedItemIndex !== -1) {
+        setActiveItemIndex(selectedItemIndex);
+      }
+    }
   }
-
   const onItemClick = (item: MenuItem) => {
     onSelect(item);
     closeMenu();
@@ -82,7 +88,6 @@ export default function Selector({
         return;
       case "ArrowDown":
       case "Down":
-        console.log("arrow down on input..");
         if (!menuShown) {
           openMenu();
           return;
@@ -101,7 +106,6 @@ export default function Selector({
         return;
       case "ArrowUp":
       case "Up":
-        console.log("arrow up on input..");
         if (menuShown && !withSearch) {
           if (items.length > 0) {
             setActiveItemIndex(
@@ -147,6 +151,7 @@ export default function Selector({
           onItemClick={onItemClick}
           focusMode={focusMode}
           setFocusMode={setFocusMode}
+          selectedItemKey={selectedItem?.key ?? null}
         />
       ) : (
         <DropdownMenuWithoutSearch
@@ -158,8 +163,11 @@ export default function Selector({
           items={items}
           onItemClick={onItemClick}
           activeItemKey={
-            activeItemIndex === null ? null : items[activeItemIndex].key
+            activeItemIndex === null
+              ? null
+              : items[activeItemIndex]?.key ?? null
           }
+          selectedItemKey={selectedItem?.key ?? null}
         />
       )}
     </>

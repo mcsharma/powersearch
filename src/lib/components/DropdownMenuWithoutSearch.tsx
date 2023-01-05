@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import { getRandomString } from "../utils/random";
 import { TOKEN_COLOR } from "../utils/constants";
 import DropdownMenuBase, { IDropdownMenuBase } from "./DropdownMenuBase";
+// import "bootstrap-icons/icons/check.svg";
 
 interface IDropdownMenuWithoutSearch extends IDropdownMenuBase {
   shown: boolean;
