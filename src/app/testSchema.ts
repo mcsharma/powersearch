@@ -1,8 +1,14 @@
-import { FieldBase, FieldType } from "../lib/types";
+import { Field, FieldType } from "../lib/types";
+import USAStates from "./USAStates";
 
-export const schemaFields: Array<FieldBase> = [
+export const schemaFields: Array<Field> = [
   { name: "Name", desc: "Name of the county", type: FieldType.TEXT },
-  { name: "State", desc: "2 Letter code", type: FieldType.STRING_ENUM },
+  {
+    name: "State",
+    desc: "US State name",
+    type: FieldType.STRING_ENUM,
+    strEnum: USAStates,
+  },
   { name: "Population", desc: "", type: FieldType.INTEGER },
   {
     name: "Is Territory",

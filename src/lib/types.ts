@@ -45,23 +45,17 @@ export interface FieldBase {
   desc: string;
 }
 
-interface ScalarField<T> extends FieldBase {
-  value: T;
+export interface ScalarField extends FieldBase {}
+export interface StringEnumField extends FieldBase {
+  strEnum: { [key: string]: string };
 }
+export interface ArrayField extends FieldBase {}
 
-export interface NumericField extends ScalarField<number> {}
-export interface BooleanField extends ScalarField<boolean> {}
-export interface StringEnumField<T> extends ScalarField<T> {}
-export interface TextField extends ScalarField<string> {}
-export interface DateField extends ScalarField<Date> {}
+export type Field = ScalarField | StringEnumField | ArrayField;
 
-export interface ArrayField<T> extends FieldBase {
-  values: Array<T>;
-}
-
-export type Field<T> = ScalarField<T> | ArrayField<T>;
-
-export type FieldsSchema = { [fieldName: string]: FieldBase };
+export type FieldsSchema = {
+  [fieldName: string]: Field;
+};
 
 export interface SimpleFilter<T> {
   id: string;
