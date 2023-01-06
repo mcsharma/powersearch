@@ -1,10 +1,9 @@
-import { OperatorType, SimpleFilter } from "./types";
+import { SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import FilterValuesInput from "./FilterValuesInput";
 import { getRandomString } from "./utils/random";
 import RemoveFilterButton from "./RemoveFilterButton";
-import FieldOperatorMappings from "./config/FieldOperatorMappings";
 import OperatorSelector from "./OperatorSelector";
 
 const Root = window.styled.div`
@@ -27,18 +26,6 @@ const DraftFilter: React.FC<IActiveFilter> = ({
   onDone,
   onRemove,
 }) => {
-  const opMenuItems = React.useMemo(
-    () =>
-      FieldOperatorMappings[filter.field.type].map((op) => ({
-        key: op,
-        label: OperatorType[op].toLowerCase().replace(/_/g, " "),
-      })),
-    []
-  );
-  // const [opItem, setOpItem] = React.useState<MenuItem>(
-  //   opMenuItems.find((item) => item.key === draftFilter?.operator) ??
-  //     opMenuItems[0]
-  // );
   const onInputDone = (values: Array<any>) => {
     onDone({
       ...filter,
@@ -46,14 +33,6 @@ const DraftFilter: React.FC<IActiveFilter> = ({
       id: getRandomString(),
     });
   };
-
-  const selectedOpItem = React.useMemo(
-    () => ({
-      key: filter.operator,
-      label: OperatorType[filter.operator].toLowerCase().replace(/_/g, " "),
-    }),
-    [filter.operator]
-  );
 
   return (
     <Root>

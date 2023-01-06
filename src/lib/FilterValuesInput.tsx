@@ -3,8 +3,6 @@ import * as React from "react";
 import TextInput from "./components/TextInput";
 import { TOKEN_COLOR } from "./utils/constants";
 import BooleanValueSelector from "./BooleanValueSelector";
-import valuesList from "./utils/valuesList";
-import Token from "./Token";
 
 interface IFilterValuesInput {
   field: FieldBase;

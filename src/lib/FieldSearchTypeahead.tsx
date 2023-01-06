@@ -4,7 +4,7 @@ import { schemaFields } from "../app/testSchema";
 import debounce from "./utils/debounce";
 import TextInput from "./components/TextInput";
 import { getRandomString } from "./utils/random";
-import DropdownMenuWithoutSearch from "./components/DropdownMenuWithoutSearch";
+import DropdownMenu from "./components/DropdownMenu";
 import { MenuItem } from "./components/DropdownMenuBase";
 
 interface IFieldSearchTypeahead {
@@ -111,7 +111,7 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
         aria-owns={dropdownID}
       />
       {inputRef.current && (
-        <DropdownMenuWithoutSearch
+        <DropdownMenu
           shown={menuShown}
           left={inputRect?.left ?? 0}
           top={(inputRect?.top ?? 0) + inputRef.current.clientHeight + 8}

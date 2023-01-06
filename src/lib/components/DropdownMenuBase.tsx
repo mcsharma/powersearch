@@ -54,9 +54,7 @@ export default function DropdownMenuBase({
         return (
           <ResultItem
             key={item.key}
-            // Using mousedown instead of onClick because typeahead input's blur is called
-            // before this item onClick and hiding this menu before onClick is executed.
-            onMouseDown={() => onItemClick(item)}
+            onClick={() => onItemClick(item)}
             role="option"
             id={item.__id}
             isActive={isActive}

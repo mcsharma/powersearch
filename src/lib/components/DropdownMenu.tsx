@@ -1,20 +1,19 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import DropdownMenuBase, { IDropdownMenuBase } from "./DropdownMenuBase";
-// import "bootstrap-icons/icons/check.svg";
 
-interface IDropdownMenuWithoutSearch extends IDropdownMenuBase {
+interface IDropdownMenu extends IDropdownMenuBase {
   shown: boolean;
   left: number;
   top: number;
 }
 
-export default function DropdownMenuWithoutSearch({
+export default function DropdownMenu({
   shown,
   left,
   top,
   ...remainingProps
-}: IDropdownMenuWithoutSearch) {
+}: IDropdownMenu) {
   return ReactDOM.createPortal(
     <Root shown={shown} left={left} top={top}>
       <DropdownMenuBase {...remainingProps} />
