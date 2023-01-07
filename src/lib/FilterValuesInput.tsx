@@ -3,6 +3,8 @@ import * as React from "react";
 import TextInput from "./components/TextInput";
 import { TOKEN_COLOR } from "./utils/constants";
 import BooleanValueSelector from "./BooleanValueSelector";
+import StringEnumValuesSelector from "./StringEnumValuesSelector";
+import USAStates from "../app/USAStates";
 
 interface IFilterValuesInput {
   field: FieldBase;
@@ -31,6 +33,18 @@ export default function FilterValuesInput({
         />
       );
     }
+    case FieldType.STRING_ENUM:
+      return (
+        <StringEnumValuesSelector
+          label={`select ${field.name}`}
+          values={values}
+          onSelect={(val) => onUpdate([val])}
+          onUnselect={(value) =>
+            onUpdate(values.filter((val) => val !== value))
+          }
+          strEnum={USAStates}
+        />
+      );
     default:
   }
 

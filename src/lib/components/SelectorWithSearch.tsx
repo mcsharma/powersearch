@@ -40,7 +40,9 @@ export default function SelectorWithSearch({
 
   const onQueryChange = (q: string) => {
     setQuery(q);
-    const newResults = items.filter((item) => item.label.includes(q.trim()));
+    const newResults = items.filter((item) =>
+      item.label.toLowerCase().includes(q.trim().toLowerCase())
+    );
     setSearchResults(newResults);
     setActiveItemIndex(0);
   };

@@ -86,6 +86,8 @@ const Root = window.styled.ul`
   margin: 0;
   min-width: 240px;
   border-radius: 2px 2px 6px 6px;
+  max-height: 300px;
+  overflow: auto;
 `;
 
 const ResultItem = window.styled.li.attrs(
