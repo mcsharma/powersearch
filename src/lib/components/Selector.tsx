@@ -4,32 +4,38 @@ import Button from "./Button";
 import useForceRenderAfterMount from "../utils/useForceRenderAfterMount";
 import { MenuItem } from "./DropdownMenuBase";
 import DropdownMenu from "./DropdownMenu";
+import valuesList from "../utils/valuesList";
 
-interface ISelector {
+interface ISelector<T> {
   label: string;
   placeholder: string;
   items: Array<MenuItem>;
-  selectedItem: MenuItem | null;
-  onSelect: (item: MenuItem) => void;
+  selection: T | null;
+  onSelectionChange: (selection: T) => void;
   // Optional Props *********
+  multiple?: boolean;
   expandOnMount?: boolean;
 }
 
-export default function Selector({
+// For single select T is MenuItem, for multi select, T is MenuItem[]
+export default function Selector<T extends Array<MenuItem> | MenuItem>({
   label,
   placeholder,
   items,
-  selectedItem,
-  onSelect,
+  selection,
+  onSelectionChange,
   expandOnMount,
-}: ISelector) {
+}: ISelector<T>) {
   const dropdownID = React.useMemo(() => getRandomString(), []);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const [menuShown, setMenuShown] = React.useState(false);
   const [activeItemIndex, setActiveItemIndex] = React.useState<number>(-1);
-  const selectedItemIndex = items.findIndex(
-    (item) => item.key === selectedItem?.key
-  );
+  const isMultiSelect = Array.isArray(selection);
+
+  // Used only for single select use case
+  const singleSelectedItemIndex = isMultiSelect
+    ? -1
+    : items.findIndex((item) => item.key === selection?.key);
 
   function closeMenu() {
     setMenuShown(false);
@@ -38,9 +44,31 @@ export default function Selector({
   function openMenu() {
     setMenuShown(true);
   }
-  const onItemClick = (item: MenuItem) => {
-    onSelect(item);
-    closeMenu();
+
+  // For multi-select use case
+  function addItem(item: MenuItem) {
+    onSelectionChange([...(selection as Array<MenuItem>), item] as T);
+  }
+  // For multi-select use case
+  function removeItem(removedItem: MenuItem) {
+    onSelectionChange(
+      (selection as Array<MenuItem>)?.filter(
+        (item) => item.key !== removedItem.key
+      ) as T
+    );
+  }
+
+  const onItemClick = (clickedItem: MenuItem) => {
+    if (isMultiSelect) {
+      if (selection.find((item) => item.key === clickedItem.key)) {
+        removeItem(clickedItem);
+      } else {
+        addItem(clickedItem);
+      }
+    } else {
+      onSelectionChange(clickedItem as T);
+      closeMenu();
+    }
   };
 
   React.useEffect(() => {
@@ -74,7 +102,9 @@ export default function Selector({
         }
         if (items.length > 0) {
           const curIndex =
-            activeItemIndex !== -1 ? activeItemIndex : selectedItemIndex;
+            activeItemIndex === -1 && !isMultiSelect
+              ? singleSelectedItemIndex
+              : activeItemIndex;
           setActiveItemIndex((curIndex + 1) % items.length);
         }
         return;
@@ -85,7 +115,9 @@ export default function Selector({
         }
         if (items.length > 0) {
           const curIndex =
-            activeItemIndex !== -1 ? activeItemIndex : selectedItemIndex;
+            activeItemIndex === -1 && !isMultiSelect
+              ? singleSelectedItemIndex
+              : activeItemIndex;
           if (curIndex === -1) {
             setActiveItemIndex(items.length - 1);
           } else {
@@ -102,7 +134,13 @@ export default function Selector({
     }
   };
 
-  const buttonLabel = selectedItem === null ? placeholder : selectedItem.label;
+  const buttonLabel = isMultiSelect
+    ? selection.length === 0
+      ? placeholder
+      : valuesList(selection.map(item => item.label))
+    : selection === null
+    ? placeholder
+    : selection.label;
   const buttonClientRect = buttonRef.current?.getBoundingClientRect();
   const { left: buttonPosLeft, bottom: buttonPosBottom } =
     buttonClientRect ?? {};
@@ -128,7 +166,13 @@ export default function Selector({
         items={items}
         onItemClick={onItemClick}
         activeItemKey={items[activeItemIndex]?.key ?? null}
-        selectedItemKey={selectedItem?.key ?? null}
+        selectedItemKeys={
+          isMultiSelect
+            ? selection.map((item) => item.key)
+            : selection
+            ? [selection.key]
+            : []
+        }
       />
     </>
   );

@@ -37,8 +37,8 @@ export default function OperatorSelector({
       <Selector
         label="Operator Selector"
         items={opMenuItems}
-        selectedItem={selectedItem}
-        onSelect={onSelect}
+        selection={selectedItem}
+        onSelectionChange={onSelect}
         placeholder="Select Operator"
       />
     </>

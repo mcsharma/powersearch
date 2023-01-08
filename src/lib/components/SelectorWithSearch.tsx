@@ -4,25 +4,28 @@ import { getRandomString } from "../utils/random";
 import Button from "./Button";
 import useForceRenderAfterMount from "../utils/useForceRenderAfterMount";
 import DropdownMenuBase, { MenuItem } from "./DropdownMenuBase";
+import valuesList from "../utils/valuesList";
 
-interface ISelectorWithSearch {
+interface ISelectorWithSearch<T> {
   label: string;
   placeholder: string;
   items: Array<MenuItem>;
-  selectedItem: MenuItem | null;
-  onSelect: (item: MenuItem) => void;
+  selection: T | null;
+  onSelectionChange: (selection: T) => void;
   // Optional Props *********
   expandOnMount?: boolean;
 }
 
-export default function SelectorWithSearch({
+export default function SelectorWithSearch<
+  T extends Array<MenuItem> | MenuItem
+>({
   label,
   placeholder,
   items,
-  selectedItem,
-  onSelect,
+  selection,
+  onSelectionChange,
   expandOnMount,
-}: ISelectorWithSearch) {
+}: ISelectorWithSearch<T>) {
   const [searchInputID, dropdownID] = React.useMemo(
     () => [getRandomString(), getRandomString()],
     []
@@ -34,9 +37,12 @@ export default function SelectorWithSearch({
   const [searchResults, setSearchResults] =
     React.useState<Array<MenuItem>>(items);
   const [activeItemIndex, setActiveItemIndex] = React.useState<number>(-1);
-  const selectedItemIndex = items.findIndex(
-    (item) => item.key === selectedItem?.key
-  );
+  const isMultiSelect = Array.isArray(selection);
+
+  // Used only for single select use case
+  const singleSelectedItemIndex = isMultiSelect
+    ? -1
+    : items.findIndex((item) => item.key === selection?.key);
 
   const onQueryChange = (q: string) => {
     setQuery(q);
@@ -82,7 +88,9 @@ export default function SelectorWithSearch({
       case "Down":
         if (searchResults.length > 0) {
           const curIndex =
-            activeItemIndex !== -1 ? activeItemIndex : selectedItemIndex;
+            activeItemIndex === -1 && !isMultiSelect
+              ? singleSelectedItemIndex
+              : activeItemIndex;
           setActiveItemIndex((curIndex + 1) % searchResults.length);
         }
         return;
@@ -90,11 +98,15 @@ export default function SelectorWithSearch({
       case "Up":
         if (searchResults.length > 0) {
           const curIndex =
-            activeItemIndex !== -1 ? activeItemIndex : selectedItemIndex;
+            activeItemIndex === -1 && !isMultiSelect
+              ? singleSelectedItemIndex
+              : activeItemIndex;
           if (curIndex === -1) {
-            setActiveItemIndex(items.length - 1);
+            setActiveItemIndex(searchResults.length - 1);
           } else {
-            setActiveItemIndex((curIndex - 1 + items.length) % items.length);
+            setActiveItemIndex(
+              (curIndex - 1 + searchResults.length) % searchResults.length
+            );
           }
         }
         return;
@@ -104,9 +116,31 @@ export default function SelectorWithSearch({
         return;
     }
   };
-  const onItemClick = (item: MenuItem) => {
-    onSelect(item);
-    setMenuShown(false);
+
+  // For multi-select use case
+  function addItem(item: MenuItem) {
+    onSelectionChange([...(selection as Array<MenuItem>), item] as T);
+  }
+  // For multi-select use case
+  function removeItem(removedItem: MenuItem) {
+    onSelectionChange(
+      (selection as Array<MenuItem>)?.filter(
+        (item) => item.key !== removedItem.key
+      ) as T
+    );
+  }
+
+  const onItemClick = (clickedItem: MenuItem) => {
+    if (isMultiSelect) {
+      if (selection.find((item) => item.key === clickedItem.key)) {
+        removeItem(clickedItem);
+      } else {
+        addItem(clickedItem);
+      }
+    } else {
+      onSelectionChange(clickedItem as T);
+      setMenuShown(false);
+    }
   };
 
   React.useEffect(() => {
@@ -128,7 +162,13 @@ export default function SelectorWithSearch({
     }, 0);
   }, [menuShown]);
 
-  const buttonLabel = selectedItem === null ? placeholder : selectedItem.label;
+  const buttonLabel = isMultiSelect
+    ? selection.length === 0
+      ? placeholder
+      : valuesList(selection.map((item) => item.label))
+    : selection === null
+    ? placeholder
+    : selection.label;
   const buttonClientRect = buttonRef.current?.getBoundingClientRect();
   const { left: buttonPosLeft, bottom: buttonPosBottom } =
     buttonClientRect ?? {};
@@ -166,8 +206,14 @@ export default function SelectorWithSearch({
             onItemClick={onItemClick}
             id={dropdownID}
             label={label}
-            selectedItemKey={selectedItem?.key ?? null}
-          />
+            selectedItemKeys={
+              isMultiSelect
+                ? selection.map((item) => item.key)
+                : selection
+                ? [selection.key]
+                : []
+            }
+              />
         </DropdownWrapper>,
         document.body
       )}

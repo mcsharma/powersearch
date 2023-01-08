@@ -16,7 +16,7 @@ export interface IDropdownMenuBase {
   // get selected if user press enter
   activeItemKey: MenuItemKey | null;
   // Item that's currenly chosen
-  selectedItemKey: MenuItemKey | null;
+  selectedItemKeys: Array<MenuItemKey>;
   onItemClick: (item: MenuItem) => void;
   itemRenderer?: (item: MenuItem) => React.ReactNode;
 }
@@ -26,7 +26,7 @@ export default function DropdownMenuBase({
   label,
   items,
   activeItemKey,
-  selectedItemKey,
+  selectedItemKeys,
   onItemClick,
   itemRenderer,
 }: IDropdownMenuBase) {
@@ -35,22 +35,18 @@ export default function DropdownMenuBase({
   }, [items]);
 
   const activeItem =
-    itemsWithIDs.find((item) => item.key === activeItemKey) ?? null;
-  const selectedItem =
-    itemsWithIDs.find((item) => item.key === selectedItemKey) ?? null;
+    itemsWithIDs.find((item) => item.key === activeItemKey) ?? undefined;
 
   return (
     <Root
       role="listbox"
       id={id}
-      aria-activedescendant={
-        selectedItem === null ? undefined : selectedItem.__id
-      }
+      aria-activedescendant={activeItem?.__id ?? undefined}
       aria-label={label}
     >
       {itemsWithIDs.map((item) => {
         const isActive = item.key === activeItemKey;
-        const isSelected = item.key === selectedItemKey;
+        const isSelected = selectedItemKeys.includes(item.key);
         return (
           <ResultItem
             key={item.key}

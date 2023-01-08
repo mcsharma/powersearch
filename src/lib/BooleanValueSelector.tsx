@@ -21,10 +21,8 @@ export default function BooleanValueSelector({
     <Selector
       label="Boolean Value Selector"
       items={menuItems}
-      selectedItem={
-        menuItems.find((item) => !!item.key === selectedValue) ?? null
-      }
-      onSelect={(item) => onSelect(!!item.key)}
+      selection={menuItems.find((item) => !!item.key === selectedValue) ?? null}
+      onSelectionChange={(item) => onSelect(!!item.key)}
       placeholder="Select Value"
       expandOnMount={true}
     />

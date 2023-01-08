@@ -36,12 +36,9 @@ export default function FilterValuesInput({
     case FieldType.STRING_ENUM:
       return (
         <StringEnumValuesSelector
-          label={`select ${field.name}`}
+          label={`Select ${field.name}`}
           values={values}
-          onSelect={(val) => onUpdate([val])}
-          onUnselect={(value) =>
-            onUpdate(values.filter((val) => val !== value))
-          }
+          onValuesChange={onUpdate}
           strEnum={USAStates}
         />
       );
