@@ -1,7 +1,6 @@
 import * as React from "react";
 import { MenuItem } from "./components/DropdownMenuBase";
 import Selector from "./components/Selector";
-import SelectorWithSearch from "./components/SelectorWithSearch";
 import FieldOperatorMappings from "./config/FieldOperatorMappings";
 import { FieldType, OperatorType } from "./types";
 

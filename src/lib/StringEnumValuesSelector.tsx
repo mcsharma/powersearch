@@ -1,6 +1,5 @@
 import * as React from "react";
 import Selector from "./components/Selector";
-import SelectorWithSearch from "./components/SelectorWithSearch";
 
 interface Props<T> {
   label: string;
@@ -20,7 +19,7 @@ export default function StringEnumValuesSelector<T extends string>({
   );
   const selection = items.filter((item) => values.includes(item.key));
 
-  return items.length < 7 ? (
+  return (
     <Selector
       label={label}
       placeholder={label}
@@ -29,19 +28,9 @@ export default function StringEnumValuesSelector<T extends string>({
       onSelectionChange={(newItems) =>
         onValuesChange(newItems.map((item) => item.key))
       }
+      withSearch={items.length > 7}
       expandOnMount={true}
       // Implement onDone here
-    />
-  ) : (
-    <SelectorWithSearch
-      label={label}
-      placeholder={label}
-      items={items}
-      selection={selection}
-      onSelectionChange={(newItems) =>
-        onValuesChange(newItems.map((item) => item.key))
-      }
-      expandOnMount={true}
     />
   );
 }

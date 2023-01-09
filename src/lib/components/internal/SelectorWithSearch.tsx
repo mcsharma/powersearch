@@ -1,20 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { getRandomString } from "../utils/random";
-import Button from "./Button";
-import useForceRenderAfterMount from "../utils/useForceRenderAfterMount";
-import DropdownMenuBase, { MenuItem } from "./DropdownMenuBase";
-import valuesList from "../utils/valuesList";
-
-interface ISelectorWithSearch<T> {
-  label: string;
-  placeholder: string;
-  items: Array<MenuItem>;
-  selection: T | null;
-  onSelectionChange: (selection: T) => void;
-  // Optional Props *********
-  expandOnMount?: boolean;
-}
+import { getRandomString } from "../../utils/random";
+import Button from "../Button";
+import useForceRenderAfterMount from "../../utils/useForceRenderAfterMount";
+import DropdownMenuBase, { MenuItem } from "../DropdownMenuBase";
+import valuesList from "../../utils/valuesList";
+import { ISelector } from "../Selector";
 
 export default function SelectorWithSearch<
   T extends Array<MenuItem> | MenuItem
@@ -25,7 +16,7 @@ export default function SelectorWithSearch<
   selection,
   onSelectionChange,
   expandOnMount,
-}: ISelectorWithSearch<T>) {
+}: Omit<ISelector<T>, "withSearch">) {
   const [searchInputID, dropdownID] = React.useMemo(
     () => [getRandomString(), getRandomString()],
     []
@@ -213,7 +204,7 @@ export default function SelectorWithSearch<
                 ? [selection.key]
                 : []
             }
-              />
+          />
         </DropdownWrapper>,
         document.body
       )}
