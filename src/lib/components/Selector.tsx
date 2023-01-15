@@ -12,6 +12,8 @@ export interface ISelector<T> {
   // Optional Props *********
   withSearch?: boolean;
   expandOnMount?: boolean;
+  onDropdownOpen?: () => void;
+  onDropdownClose?: () => void;
 }
 
 // For single select T is MenuItem, for multi select, T is MenuItem[]

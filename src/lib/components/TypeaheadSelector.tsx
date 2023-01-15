@@ -1,14 +1,19 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { getRandomString } from "../../utils/random";
-import useForceRenderAfterMount from "../../utils/useForceRenderAfterMount";
-import DropdownMenuBase, { MenuItem } from "../DropdownMenuBase";
-import valuesList from "../../utils/valuesList";
-import { ISelector } from "../Selector";
-import Token from "../../Token";
-import Button from "../Button";
+import Token from "../Token";
+import { TOKEN_COLOR } from "../utils/constants";
+import { getRandomString } from "../utils/random";
+import useForceRenderAfterMount from "../utils/useForceRenderAfterMount";
+import DropdownMenuBase, { MenuItem } from "./DropdownMenuBase";
+import { ISelector } from "./Selector";
+import TextInput from "./TextInput";
 
-export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>({
+interface ITypeaheadSelector
+  extends Omit<ISelector<Array<MenuItem>>, "withSearch"> {
+  // To force the selection's type to be non-nullable
+  selection: Array<MenuItem>;
+}
+export default function TypeaheadSelector({
   label,
   placeholder,
   items,
@@ -17,10 +22,9 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
   onDropdownOpen,
   onDropdownClose,
   expandOnMount,
-}: Omit<ISelector<T>, "withSearch">) {
+}: ITypeaheadSelector) {
   const dropdownID = React.useMemo(() => getRandomString(), []);
   const dropdownRootRef = React.useRef<HTMLDivElement>(null);
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
   const [menuShown, _setMenuShown] = React.useState<boolean>(false);
   // Using a refs as well so that we have access to the latest state inside event listener
   // https://stackoverflow.com/questions/55265255/react-usestate-hook-event-handler-using-initial-state
@@ -28,11 +32,6 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
   const onDropdownOpenRef = React.useRef(onDropdownOpen);
   const onDropdownCloseRef = React.useRef(onDropdownClose);
   const [activeItemIndex, setActiveItemIndex] = React.useState<number>(-1);
-  const isMultiSelect = Array.isArray(selection);
-  // Used only for single select use case
-  const singleSelectedItemIndex = isMultiSelect
-    ? -1
-    : items.findIndex((item) => item.key === selection?.key);
 
   React.useEffect(() => {
     onDropdownCloseRef.current = onDropdownClose;
@@ -53,45 +52,32 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
       _setMenuShown(false);
       menuShownRef.current = false;
       onDropdownCloseRef.current && onDropdownCloseRef.current();
+      setActiveItemIndex(-1);
     }
-  }
-
-  // For multi-select use case
-  function addItem(item: MenuItem) {
-    onSelectionChange([...(selection as Array<MenuItem>), item] as T);
-  }
-  // For multi-select use case
-  function removeItem(removedItem: MenuItem) {
-    onSelectionChange(
-      (selection as Array<MenuItem>)?.filter(
-        (item) => item.key !== removedItem.key
-      ) as T
-    );
   }
 
   const onItemClick = (clickedItem: MenuItem, index: number) => {
-    if (isMultiSelect) {
-      if (selection.find((item) => item.key === clickedItem.key)) {
-        removeItem(clickedItem);
-      } else {
-        addItem(clickedItem);
-      }
+    let newSelection = selection;
+    if (selection.find((item) => item.key === clickedItem.key)) {
+      newSelection = selection.filter((item) => item.key !== clickedItem.key);
     } else {
-      onSelectionChange(clickedItem as T);
-      closeMenu();
+      newSelection = [...selection, clickedItem];
     }
+    onSelectionChange(newSelection);
     setActiveItemIndex(index);
+    searchInputRef.current?.focus();
   };
 
   React.useEffect(() => {
     if (expandOnMount) {
+      searchInputRef.current?.focus();
       openMenu();
     }
     function globalClickHandler(event: MouseEvent) {
       if (dropdownRootRef.current) {
         if (
           !dropdownRootRef.current.contains(event.target as Node) &&
-          event.target !== buttonRef.current
+          event.target !== searchInputRef.current
         ) {
           closeMenu();
         }
@@ -105,17 +91,6 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
     };
   }, []);
 
-  const buttonLabel = isMultiSelect
-    ? selection.length === 0
-      ? placeholder
-      : valuesList(selection.map((item) => item.label))
-    : selection === null
-    ? placeholder
-    : selection.label;
-  const buttonClientRect = buttonRef.current?.getBoundingClientRect();
-  const { left: buttonPosLeft, bottom: buttonPosBottom } =
-    buttonClientRect ?? {};
-
   useForceRenderAfterMount();
 
   // #### Following logic is specific to SelectorWithSearch.tsx #######
@@ -124,7 +99,6 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
   const [query, setQuery] = React.useState("");
   const [searchResults, setSearchResults] =
     React.useState<Array<MenuItem>>(items);
-
   const onQueryChange = (q: string) => {
     setQuery(q);
     const newResults = items.filter((item) =>
@@ -134,23 +108,9 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
     setActiveItemIndex(0);
   };
 
-  const onButtonKeydown: React.KeyboardEventHandler = (e) => {
-    switch (e.key) {
-      case "Enter":
-        // Pressing enter triggers onClick, no need to handle it here.
-        return;
-      case "ArrowDown":
-      case "Down":
-        openMenu();
-        return;
-      case "ArrowUp":
-      case "Up":
-      case "Esc":
-      case "Escape":
-        closeMenu();
-        return;
-    }
-  };
+  const buttonClientRect = searchInputRef.current?.getBoundingClientRect();
+  const { left: buttonPosLeft, bottom: buttonPosBottom } =
+    buttonClientRect ?? {};
 
   const onSearchKeyDown = (key: string) => {
     switch (key) {
@@ -164,25 +124,18 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
       case "ArrowDown":
       case "Down":
         if (searchResults.length > 0) {
-          const curIndex =
-            activeItemIndex === -1 && !isMultiSelect
-              ? singleSelectedItemIndex
-              : activeItemIndex;
-          setActiveItemIndex((curIndex + 1) % searchResults.length);
+          setActiveItemIndex((activeItemIndex + 1) % searchResults.length);
         }
         return;
       case "ArrowUp":
       case "Up":
         if (searchResults.length > 0) {
-          const curIndex =
-            activeItemIndex === -1 && !isMultiSelect
-              ? singleSelectedItemIndex
-              : activeItemIndex;
-          if (curIndex === -1) {
+          if (activeItemIndex === -1) {
             setActiveItemIndex(searchResults.length - 1);
           } else {
             setActiveItemIndex(
-              (curIndex - 1 + searchResults.length) % searchResults.length
+              (activeItemIndex - 1 + searchResults.length) %
+                searchResults.length
             );
           }
         }
@@ -196,22 +149,24 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
 
   React.useEffect(() => {
     if (menuShown) {
-      searchInputRef?.current?.focus();
-    } else {
-      buttonRef.current?.focus();
       setActiveItemIndex(-1);
     }
   }, [menuShown]);
 
   return (
     <>
-      <Button
-        buttonRef={buttonRef as React.RefObject<HTMLButtonElement>}
-        onClick={() => (menuShown ? closeMenu() : openMenu())}
-        label={buttonLabel}
-        onKeyDown={onButtonKeydown}
-        ownedIDs={[dropdownID]}
-        round="none"
+      <TextInput
+        inputRef={searchInputRef}
+        id={searchInputID}
+        placeholder={placeholder}
+        aria-label="Search dropdown items"
+        value={query}
+        height="100%"
+        width={100}
+        borderRadius={0}
+        borderColor={TOKEN_COLOR}
+        onChange={onQueryChange}
+        onKeyDown={(e) => onSearchKeyDown(e.key)}
       />
       {ReactDOM.createPortal(
         <DropdownWrapper
@@ -220,28 +175,13 @@ export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>
           top={(buttonPosBottom ?? 0) + 5}
           left={buttonPosLeft ?? 0}
         >
-          <SearchInput
-            ref={searchInputRef}
-            id={searchInputID}
-            placeholder="Search..."
-            aria-label="Search dropdown items"
-            value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
-            onKeyDown={(e) => onSearchKeyDown(e.key)}
-          />
           <DropdownMenuBase
             items={searchResults}
             activeItemKey={searchResults[activeItemIndex]?.key ?? null}
             onItemClick={onItemClick}
             id={dropdownID}
             label={label}
-            selectedItemKeys={
-              isMultiSelect
-                ? selection.map((item) => item.key)
-                : selection
-                ? [selection.key]
-                : []
-            }
+            selectedItemKeys={selection.map((item) => item.key)}
           />
         </DropdownWrapper>,
         document.body
@@ -270,15 +210,4 @@ const DropdownWrapper = window.styled.div.attrs(
   top: ${({ top }) => top}px;
   position: absolute;
   box-shadow: 0  5px 10px rgba(154,160,185,0.05), 0 15px 40px rgba(166,173,201,0.2);
-`;
-const SearchInput = window.styled.input`
-  box-sizing: border-box;
-  margin-bottom: 1px;
-  padding-left: 12px;
-  width: 100%;
-  height: 32px;
-  border: 1px solid lightgrey;
-  border-radius: 0;
-  border: none;
-  border-bottom: 1px solid lightgrey;
 `;

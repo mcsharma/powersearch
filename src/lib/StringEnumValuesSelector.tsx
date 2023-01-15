@@ -1,16 +1,20 @@
 import * as React from "react";
-import Selector from "./components/Selector";
+import TypeaheadSelector from "./components/TypeaheadSelector";
+import Token from "./Token";
+import valuesList from "./utils/valuesList";
 
 interface Props<T> {
   label: string;
   values: Array<T>;
-  onValuesChange: (values: Array<T>) => void;
+  onUpdate: (values: Array<T>) => void;
+  onDone: (values: Array<T>) => void;
   strEnum: { [key: string]: T };
 }
 export default function StringEnumValuesSelector<T extends string>({
   label,
   values,
-  onValuesChange,
+  onUpdate,
+  onDone,
   strEnum,
 }: Props<T>) {
   const items = React.useMemo(
@@ -18,19 +22,19 @@ export default function StringEnumValuesSelector<T extends string>({
     []
   );
   const selection = items.filter((item) => values.includes(item.key));
-
+  const tokenLabel = valuesList(selection.map((item) => item.label));
+  const onDropdownClose = React.useCallback(() => onDone(values), [values]);
   return (
-    <Selector
+    <TypeaheadSelector
       label={label}
       placeholder={label}
       items={items}
       selection={selection}
       onSelectionChange={(newItems) =>
-        onValuesChange(newItems.map((item) => item.key))
+        onUpdate(newItems.map((item) => item.key) as T[])
       }
-      withSearch={items.length > 7}
       expandOnMount={true}
-      // Implement onDone here
+      onDropdownClose={onDropdownClose}
     />
   );
 }

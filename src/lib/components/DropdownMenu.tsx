@@ -6,16 +6,18 @@ interface IDropdownMenu extends IDropdownMenuBase {
   shown: boolean;
   left: number;
   top: number;
+  rootRef?: React.RefObject<HTMLDivElement>;
 }
 
 export default function DropdownMenu({
   shown,
   left,
   top,
+  rootRef,
   ...remainingProps
 }: IDropdownMenu) {
   return ReactDOM.createPortal(
-    <Root shown={shown} left={left} top={top}>
+    <Root shown={shown} left={left} top={top} ref={rootRef}>
       <DropdownMenuBase {...remainingProps} />
     </Root>,
     document.body

@@ -6,6 +6,7 @@ import TextInput from "./components/TextInput";
 import { getRandomString } from "./utils/random";
 import DropdownMenu from "./components/DropdownMenu";
 import { MenuItem } from "./components/DropdownMenuBase";
+import { TOKEN_COLOR } from "./utils/constants";
 
 interface IFieldSearchTypeahead {
   onSelect: (field: FieldBase) => void;
@@ -46,11 +47,10 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
 
   const filterResults = React.useCallback(
     (query: string) => {
-      setResults(
-        schemaFields.filter((field) =>
-          field.name.toLowerCase().includes(query.trim().toLowerCase())
-        )
+      const newResults = schemaFields.filter((field) =>
+        field.name.toLowerCase().includes(query.trim().toLowerCase())
       );
+      setResults(newResults);
       setActiveItemIndex(0);
     },
     [schemaFields]
@@ -109,6 +109,7 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
         onKeyDown={onKeyDown}
         onFocus={openMenu}
         aria-owns={dropdownID}
+        borderColor={TOKEN_COLOR}
       />
       {inputRef.current && (
         <DropdownMenu

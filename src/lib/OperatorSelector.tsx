@@ -26,20 +26,17 @@ export default function OperatorSelector({
   const selectedItem = opMenuItems.find(
     (item) => item.key === selectedOperator
   ) as MenuItem;
-
   const onSelect = (item: MenuItem) => {
     onChange(item.key as OperatorType);
   };
 
   return (
-    <>
-      <Selector
-        label="Operator Selector"
-        items={opMenuItems}
-        selection={selectedItem}
-        onSelectionChange={onSelect}
-        placeholder="Select Operator"
-      />
-    </>
+    <Selector
+      label="Operator Selector"
+      items={opMenuItems}
+      selection={selectedItem}
+      onSelectionChange={onSelect}
+      placeholder="Select Operator"
+    />
   );
 }

@@ -3,13 +3,14 @@ import * as React from "react";
 type BorderType = "all" | "horizontal" | "bottom" | "none";
 
 interface ITextInput {
+  id?: string;
   border?: BorderType;
   borderColor?: string;
+  borderRadius?: number;
   height?: "100%" | number;
-  width?: "auto" | "100%" | number;
+  width?: "100%" | number | "auto";
   minWidth?: number;
   maxWidth?: number;
-  autoGrow?: boolean; // default false
   placeholder?: string; // default '' (empty string)
   value: string;
   onChange: (value: string) => void;
@@ -34,29 +35,32 @@ const SpanInput = window.styled.span.attrs(
     maxWidth,
     border,
     borderColor,
+    borderRadius,
   }: {
+    height: "100%" | number;
+    width: "auto" | "100%" | number;
     minWidth: number;
     maxWidth: number;
-    width: "auto" | "100%" | number;
-    height: number | "100%";
     border: BorderType;
     borderColor: string;
+    borderRadius: number;
   }) => ({
-    minWidth: minWidth ?? undefined,
-    maxWidth: maxWidth ?? undefined,
-    width: typeof width === "string" ? width : `${width}px`,
+    height,
+    width,
+    minWidth,
+    maxWidth,
     border,
-    borderColor: borderColor ?? "lightgray",
-    height: height === "100%" ? height : `${height}px`,
+    borderColor,
+    borderRadius,
   })
 )`
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  height: ${({ height }) => (height === "100%" ? height : `${height}px`)};
+  width: ${({ width }) => (typeof width === "string" ? width : `${width}px`)};
   min-width: ${({ minWidth }) => `${minWidth}px`}; 
-  max-width: ${({ maxWidth }) => `${maxWidth}px`}; 
-  height: ${({ height }) => height};
-  width: ${({ width }) => width};
+  max-width: ${({ maxWidth }) => `${maxWidth}px`};
   border: ${({ border, borderColor }) =>
     border === "all"
       ? `1px solid ${borderColor}`
@@ -69,7 +73,8 @@ const SpanInput = window.styled.span.attrs(
     border === "horizontal" || border === "bottom"
       ? `1px solid ${borderColor}`
       : undefined};
-  border-radius: ${({ border }) => (border === "all" ? "4px" : 0)};
+  border-radius: ${({ border, borderRadius }) =>
+    border === "all" ? `${borderRadius}px` : 0};
   padding: 0 6px;
   line-height: 32px;
   outline: 0;
@@ -86,27 +91,30 @@ const Input = window.styled.input.attrs(
     maxWidth,
     border,
     borderColor,
+    borderRadius,
   }: {
+    height: "100%" | number;
+    width: "100%" | number;
     minWidth: number;
     maxWidth: number;
-    width: "100%" | number;
-    height: number | "100%";
     border: BorderType;
     borderColor: string;
+    borderRadius: number;
   }) => ({
-    minWidth: minWidth ?? undefined,
-    maxWidth: maxWidth ?? undefined,
-    width: width === "100%" ? width : `${width}px`,
+    height,
+    width,
+    minWidth,
+    maxWidth,
     border,
-    borderColor: borderColor ?? "lightgray",
-    height: height === "100%" ? height : `${height}px`,
+    borderColor,
+    borderRadius,
   })
 )`
   box-sizing: border-box;
-  min-width: ${({ minWidth }) => minWidth}; 
-  max-width: ${({ maxWidth }) => maxWidth};
-  height: ${({ height }) => height};
-  width: ${({ width }) => width};
+  height: ${({ height }) => (height === "100%" ? height : `${height}px`)};
+  width: ${({ width }) => (width === "100%" ? width : `${width}px`)};
+  min-width: ${({ minWidth }) => `${minWidth}px`}; 
+  max-width: ${({ maxWidth }) => `${maxWidth}px`};
   border: ${({ border, borderColor }) =>
     border === "all"
       ? `1px solid ${borderColor}`
@@ -119,7 +127,8 @@ const Input = window.styled.input.attrs(
     border === "horizontal" || border === "bottom"
       ? `1px solid ${borderColor}`
       : undefined};
-  border-radius: ${({ border }) => (border === "all" ? "4px" : 0)};
+  border-radius: ${({ border, borderRadius }) =>
+    border === "all" ? `${borderRadius}px` : 0};  
   padding: 0 6px;
   display: flex;
   justify-content: center;
@@ -132,7 +141,7 @@ const Input = window.styled.input.attrs(
 `;
 
 export default function TextInput({
-  autoGrow,
+  id,
   placeholder,
   value,
   onChange,
@@ -141,8 +150,9 @@ export default function TextInput({
   onFocus,
   onBlur,
   inputRef,
-  border,
-  borderColor,
+  border = "all",
+  borderColor = "lightgrey",
+  borderRadius = 4,
   height = 32,
   width = "auto",
   maxWidth,
@@ -150,7 +160,7 @@ export default function TextInput({
 }: ITextInput) {
   const initialValue = React.useMemo(() => value, []);
   React.useEffect(() => {
-    if (autoGrow) {
+    if (width === "auto") {
       setEndOfContenteditable(inputRef?.current ?? null);
     }
   }, []);
@@ -162,9 +172,10 @@ export default function TextInput({
     }
   }, [!!inputRef?.current]);
 
-  if (autoGrow) {
+  if (width === "auto") {
     return (
       <SpanInput
+        id={id}
         height={height}
         width={width}
         minWidth={minWidth}
@@ -172,6 +183,7 @@ export default function TextInput({
         ref={inputRef}
         border={border}
         borderColor={borderColor}
+        borderRadius={borderRadius}
         role="textbox"
         placeholder={placeholder ?? ""}
         contentEditable={true}
@@ -189,6 +201,7 @@ export default function TextInput({
   }
   return (
     <Input
+      id={id}
       type="text"
       height={height}
       width={width}
@@ -196,6 +209,7 @@ export default function TextInput({
       maxWidth={maxWidth}
       border={border}
       borderColor={borderColor}
+      borderRadius={borderRadius}
       placeholder={placeholder ?? ""}
       value={value}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

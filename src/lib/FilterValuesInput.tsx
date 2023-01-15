@@ -38,7 +38,8 @@ export default function FilterValuesInput({
         <StringEnumValuesSelector
           label={`Select ${field.name}`}
           values={values}
-          onValuesChange={onUpdate}
+          onUpdate={onUpdate}
+          onDone={onDone}
           strEnum={USAStates}
         />
       );
@@ -51,7 +52,7 @@ export default function FilterValuesInput({
       height="100%"
       border="horizontal"
       borderColor={TOKEN_COLOR}
-      autoGrow={true}
+      width="auto"
       value={values[0]}
       onChange={(value) => onUpdate([value])}
       placeholder="Filter values..."

@@ -17,7 +17,9 @@ export interface IDropdownMenuBase {
   activeItemKey: MenuItemKey | null;
   // Item that's currenly chosen
   selectedItemKeys: Array<MenuItemKey>;
-  onItemClick: (item: MenuItem) => void;
+  onItemClick: (item: MenuItem, index: number) => void;
+  // Optional props
+  multiple?: boolean;
   itemRenderer?: (item: MenuItem) => React.ReactNode;
 }
 
@@ -28,33 +30,28 @@ export default function DropdownMenuBase({
   activeItemKey,
   selectedItemKeys,
   onItemClick,
+  multiple,
   itemRenderer,
 }: IDropdownMenuBase) {
-  const itemsWithIDs = React.useMemo(() => {
-    return items.map((item) => ({ ...item, __id: getRandomString() }));
-  }, [items]);
-
-  const activeItem =
-    itemsWithIDs.find((item) => item.key === activeItemKey) ?? undefined;
-
   return (
     <Root
       role="listbox"
       id={id}
-      aria-activedescendant={activeItem?.__id ?? undefined}
+      aria-multiselectable={multiple ?? false}
+      aria-activedescendant={activeItemKey ? `${id}-${activeItemKey}` : ""}
       aria-label={label}
     >
-      {itemsWithIDs.map((item) => {
+      {items.map((item, index) => {
         const isActive = item.key === activeItemKey;
         const isSelected = selectedItemKeys.includes(item.key);
         return (
           <ResultItem
             key={item.key}
-            onClick={() => onItemClick(item)}
+            onClick={() => onItemClick(item, index)}
             role="option"
-            id={item.__id}
+            id={`${id}-${item.key}`}
             isActive={isActive}
-            aria-selected={isActive}
+            aria-selected={isSelected}
           >
             {itemRenderer ? (
               itemRenderer(item)
