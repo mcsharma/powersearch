@@ -156,15 +156,15 @@ export default function TypeaheadSelector({
   return (
     <>
       <TextInput
+        onFocus={openMenu}
         inputRef={searchInputRef}
         id={searchInputID}
         placeholder={placeholder}
         aria-label="Search dropdown items"
-        value={query}
-        height="100%"
         width={100}
         borderRadius={0}
         borderColor={TOKEN_COLOR}
+        value={query}
         onChange={onQueryChange}
         onKeyDown={(e) => onSearchKeyDown(e.key)}
       />

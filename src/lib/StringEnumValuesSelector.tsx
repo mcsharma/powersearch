@@ -22,8 +22,11 @@ export default function StringEnumValuesSelector<T extends string>({
     []
   );
   const selection = items.filter((item) => values.includes(item.key));
-  const tokenLabel = valuesList(selection.map((item) => item.label));
-  const onDropdownClose = React.useCallback(() => onDone(values), [values]);
+  const onDropdownClose = React.useCallback(() => {
+    if (values.length > 0) {
+      onDone(values);
+    }
+  }, [values]);
   return (
     <TypeaheadSelector
       label={label}

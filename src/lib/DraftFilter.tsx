@@ -6,13 +6,6 @@ import { getRandomString } from "./utils/random";
 import RemoveFilterButton from "./RemoveFilterButton";
 import OperatorSelector from "./OperatorSelector";
 
-const Root = window.styled.div`
-  display: flex;
-  &:not(:last-child) {
-    margin-right: 4px;
-  }
-`;
-
 interface IActiveFilter {
   filter: SimpleFilter<any>;
   onUpdate: (newFilter: SimpleFilter<any>) => void;
@@ -50,9 +43,15 @@ const DraftFilter: React.FC<IActiveFilter> = ({
         onUpdate={(values) => onUpdate({ ...filter, values })}
         onDone={onInputDone}
       />
+      <div style={{ width: 1 }} />
       <RemoveFilterButton onClick={onRemove} />
     </Root>
   );
 };
 
 export default DraftFilter;
+
+const Root = window.styled.div`
+  display: flex;
+  margin: 2px;
+`;

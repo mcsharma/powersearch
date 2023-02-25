@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TOKEN_COLOR } from "../utils/constants";
+import { TOKEN_COLOR, TOKEN_HEIGHT } from "../utils/constants";
 import { RoundMode } from "../utils/types";
 import { roundModeToBorderRadius } from "../utils/roundModeToBorderRadius";
 import Icon, { IconType } from "../icons/Icon";
@@ -47,6 +47,7 @@ const Root = window.styled.button.attrs(({ round }: RootProps) => ({
   border-radius: ${({ round }) => roundModeToBorderRadius[round ?? "both"]};
   padding: 0 12px;
   box-sizing: border-box;
+  height: ${TOKEN_HEIGHT}px;
   display: flex;
   justify-content: center;
   align-items: center;

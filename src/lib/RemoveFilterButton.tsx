@@ -1,5 +1,9 @@
 import * as React from "react";
-import { TOKEN_BORDER_RADIUS, TOKEN_COLOR } from "./utils/constants";
+import {
+  TOKEN_BORDER_RADIUS,
+  TOKEN_COLOR,
+  TOKEN_HEIGHT,
+} from "./utils/constants";
 import Icon from "./icons/Icon";
 
 interface IRemoveFilterButton {
@@ -7,6 +11,7 @@ interface IRemoveFilterButton {
 }
 const Root = window.styled.button`
   display: flex;
+  height: ${TOKEN_HEIGHT}px;
   background-color: ${TOKEN_COLOR};
   border: none;
   justify-content: center;

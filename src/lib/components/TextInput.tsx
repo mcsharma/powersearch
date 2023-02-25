@@ -1,4 +1,5 @@
 import * as React from "react";
+import { TOKEN_HEIGHT } from "../utils/constants";
 
 type BorderType = "all" | "horizontal" | "bottom" | "none";
 
@@ -76,7 +77,7 @@ const SpanInput = window.styled.span.attrs(
   border-radius: ${({ border, borderRadius }) =>
     border === "all" ? `${borderRadius}px` : 0};
   padding: 0 6px;
-  line-height: 32px;
+  line-height: ${TOKEN_HEIGHT}px;
   outline: 0;
   &:focus {
     outline: none!important;
@@ -153,7 +154,7 @@ export default function TextInput({
   border = "all",
   borderColor = "lightgrey",
   borderRadius = 4,
-  height = 32,
+  height = TOKEN_HEIGHT,
   width = "auto",
   maxWidth,
   minWidth = 110,

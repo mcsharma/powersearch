@@ -6,18 +6,6 @@ import { FieldBase, OperatorType, SimpleFilter } from "./types";
 import getDefaultFilterValues from "./utils/getDefaultFilterValues";
 const styled = window.styled;
 
-const Root = styled.div`
-  box-sizing: border-box;
-  height: 44px;
-  min-width: 800px;
-  padding: 4px;
-  border-radius: 6px;
-  display: flex;
-  border: 1px solid lightgray;
-  align-items: stretch;
-  position: relative;
-`;
-
 interface IPowerSearch {
   schema: Array<FieldBase>;
 }
@@ -82,3 +70,16 @@ const PowerSearch: React.FC<IPowerSearch> = ({ schema }) => {
 };
 
 export default PowerSearch;
+
+const Root = styled.div`
+  box-sizing: border-box;
+  width: 800px;
+  padding: 2px;
+  border-radius: 6px;
+  display: flex;
+  border: 1px solid lightgray;
+  align-items: stretch;
+  position: relative;
+  flex-wrap: wrap;
+`;
+

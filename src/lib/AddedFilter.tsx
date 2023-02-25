@@ -12,13 +12,6 @@ interface IFilterToken {
   onUpdate: (newFilter: SimpleFilter<any>) => void;
   onDelete: () => void;
 }
-const Root = window.styled.div`
-  display: flex;
-  align-items: stretch;
-  &:not(:last-child) {
-    margin-right: 8px;
-  }
-`;
 
 const AddedFilter: React.FC<IFilterToken> = ({
   filter,
@@ -62,3 +55,8 @@ const AddedFilter: React.FC<IFilterToken> = ({
 };
 
 export default AddedFilter;
+
+const Root = window.styled.div`
+  display: flex;
+  margin: 2px;
+`;

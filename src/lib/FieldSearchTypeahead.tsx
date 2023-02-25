@@ -6,7 +6,7 @@ import TextInput from "./components/TextInput";
 import { getRandomString } from "./utils/random";
 import DropdownMenu from "./components/DropdownMenu";
 import { MenuItem } from "./components/DropdownMenuBase";
-import { TOKEN_COLOR } from "./utils/constants";
+import { TOKEN_COLOR, TOKEN_HEIGHT } from "./utils/constants";
 
 interface IFieldSearchTypeahead {
   onSelect: (field: FieldBase) => void;
@@ -15,9 +15,10 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
   onSelect,
 }) => {
   const dropdownID = React.useMemo(() => getRandomString(), []);
-  const [menuShown, setMenuShown] = React.useState(true);
+  const dropdownRootRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [activeItemIndex, setActiveItemIndex] = React.useState<number>(0);
+  const [menuShown, setMenuShown] = React.useState(true);
 
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<Array<FieldBase>>(schemaFields);
@@ -97,10 +98,29 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
   }, [!!inputRef.current]);
   const inputRect = inputRef.current?.getBoundingClientRect();
 
+  React.useEffect(() => {
+    function globalClickHandler(event: MouseEvent) {
+      if (dropdownRootRef.current) {
+        if (
+          !dropdownRootRef.current.contains(event.target as Node) &&
+          event.target !== inputRef.current
+        ) {
+          closeMenu();
+        }
+      }
+    }
+    // In next event loop, to avoid being called immediately
+    // https://stackoverflow.com/questions/27625584/attaching-click-event-listener-in-onclick-immediately-calls-that-event-listener
+    setTimeout(() => document.addEventListener("click", globalClickHandler), 0);
+    return () => {
+      document.removeEventListener("click", globalClickHandler);
+    };
+  }, []);
+
   return (
-    <>
+    <Root>
       <TextInput
-        height="100%"
+        width="100%"
         border="none"
         onChange={onChange}
         value={query}
@@ -113,6 +133,7 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
       />
       {inputRef.current && (
         <DropdownMenu
+          rootRef={dropdownRootRef}
           shown={menuShown}
           left={inputRect?.left ?? 0}
           top={(inputRect?.top ?? 0) + inputRef.current.clientHeight + 8}
@@ -127,8 +148,12 @@ const FieldSearchTypeahead: React.FC<IFieldSearchTypeahead> = ({
           selectedItemKeys={[]}
         />
       )}
-    </>
+    </Root>
   );
 };
 
 export default FieldSearchTypeahead;
+
+const Root = window.styled.div`
+margin: 2px 0;
+flex-grow: 1`;

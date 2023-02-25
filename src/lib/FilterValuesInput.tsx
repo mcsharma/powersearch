@@ -49,13 +49,12 @@ export default function FilterValuesInput({
   return (
     <TextInput
       inputRef={ref}
-      height="100%"
-      border="horizontal"
-      borderColor={TOKEN_COLOR}
+      placeholder="Filter values..."
       width="auto"
+      borderRadius={0}
+      borderColor={TOKEN_COLOR}
       value={values[0]}
       onChange={(value) => onUpdate([value])}
-      placeholder="Filter values..."
       onKeyDown={(e) =>
         e.key === "Enter" && !!values[0].trim()
           ? onDone([values[0].trim()])

@@ -7,8 +7,11 @@ import valuesList from "../../utils/valuesList";
 import { ISelector } from "../Selector";
 import Token from "../../Token";
 import Button from "../Button";
+import { TOKEN_HEIGHT } from "../../utils/constants";
 
-export default function SelectorWithSearch<T extends Array<MenuItem> | MenuItem>({
+export default function SelectorWithSearch<
+  T extends Array<MenuItem> | MenuItem
+>({
   label,
   placeholder,
   items,
@@ -276,7 +279,7 @@ const SearchInput = window.styled.input`
   margin-bottom: 1px;
   padding-left: 12px;
   width: 100%;
-  height: 32px;
+  height: ${TOKEN_HEIGHT}px;
   border: 1px solid lightgrey;
   border-radius: 0;
   border: none;

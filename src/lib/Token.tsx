@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TOKEN_COLOR } from "./utils/constants";
+import { TOKEN_COLOR, TOKEN_HEIGHT } from "./utils/constants";
 import { roundModeToBorderRadius } from "./utils/roundModeToBorderRadius";
 import { RoundMode } from "./utils/types";
 
@@ -18,6 +18,7 @@ const Root = window.styled.div.attrs(({ round }: { round: RoundMode }) => ({
   align-items: center;
   background-color: ${TOKEN_COLOR};
   flex-shrink: 0;
+  height: ${TOKEN_HEIGHT}px;
   border-radius: ${({ round }) => roundModeToBorderRadius[round]}
 `;
 
