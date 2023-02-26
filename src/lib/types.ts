@@ -1,5 +1,3 @@
-import { InputType } from "./utils/types";
-
 export enum FieldType {
   BOOLEAN,
   INTEGER,
@@ -65,7 +63,3 @@ export interface SimpleFilter<T> {
   operator: OperatorType;
   values: Array<T>;
 }
-
-export type FieldOperatorMetadata = {
-  inputType: InputType;
-};

@@ -1,11 +1,6 @@
-import { FieldBase, FieldType, OperatorType } from "./types";
 import * as React from "react";
 import TextInput from "./components/TextInput";
 import { TOKEN_COLOR } from "./utils/constants";
-import BooleanValueSelector from "./BooleanValueSelector";
-import StringEnumValuesSelector from "./StringEnumValuesSelector";
-import USAStates from "../app/USAStates";
-import { InputType } from "./utils/types";
 
 interface ITextFilterInput {
   fieldName: string;
