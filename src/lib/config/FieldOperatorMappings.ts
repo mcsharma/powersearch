@@ -52,14 +52,11 @@ const FieldOperatorMappings: { [key in FieldType]: Array<OperatorType> } = {
   ],
   [FieldType.DATE_AND_TIME]: [
     OperatorType.IS_LESS_THAN,
-    OperatorType.IS_LESS_THAN_OR_EQUAL,
     OperatorType.IS_GREATER_THAN,
-    OperatorType.IS_GREATER_THAN_OR_EQUAL,
     OperatorType.IS_BETWEEN,
   ],
 
   [FieldType.ARRAY]: [
-    OperatorType.CONTAINS,
     OperatorType.CONTAINS_ANY_OF,
     OperatorType.CONTAINS_ALL_OF,
   ],

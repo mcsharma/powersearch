@@ -60,7 +60,7 @@ const SpanInput = window.styled.span.attrs(
   align-items: center;
   height: ${({ height }) => (height === "100%" ? height : `${height}px`)};
   width: ${({ width }) => (typeof width === "string" ? width : `${width}px`)};
-  min-width: ${({ minWidth }) => `${minWidth}px`}; 
+  min-width: ${({ minWidth }) => `${minWidth ?? 100}px`}; 
   max-width: ${({ maxWidth }) => `${maxWidth}px`};
   border: ${({ border, borderColor }) =>
     border === "all"
@@ -157,7 +157,7 @@ export default function TextInput({
   height = TOKEN_HEIGHT,
   width = "auto",
   maxWidth,
-  minWidth = 110,
+  minWidth,
 }: ITextInput) {
   const initialValue = React.useMemo(() => value, []);
   React.useEffect(() => {

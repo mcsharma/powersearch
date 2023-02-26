@@ -56,6 +56,9 @@ const Root = window.styled.button.attrs(({ round }: RootProps) => ({
   font-family: verdana;
   font-size: 14px;
   cursor: pointer;
+  & > svg {
+    pointer-events: none;
+  }
 `;
 
 const ButtonIcon = window.styled(Icon)`

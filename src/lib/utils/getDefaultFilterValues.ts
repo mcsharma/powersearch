@@ -8,6 +8,8 @@ export default function getDefaultFilterValues(
   switch (fieldType) {
     case FieldType.BOOLEAN:
       return [true];
+    case FieldType.STRING_ENUM:
+      return [];
   }
   return [""];
 }

@@ -5,6 +5,7 @@ import { TOKEN_COLOR } from "./utils/constants";
 import BooleanValueSelector from "./BooleanValueSelector";
 import StringEnumValuesSelector from "./StringEnumValuesSelector";
 import USAStates from "../app/USAStates";
+import TextFilterInput from "./TextFilterInput";
 
 interface IFilterValuesInput {
   field: FieldBase;
@@ -19,9 +20,8 @@ export default function FilterValuesInput({
   values,
   onUpdate,
   onDone,
+  operatorType,
 }: IFilterValuesInput) {
-  const ref = React.useRef<HTMLElement>(null);
-
   switch (field.type) {
     case FieldType.BOOLEAN: {
       return (
@@ -33,41 +33,91 @@ export default function FilterValuesInput({
         />
       );
     }
-    case FieldType.STRING_ENUM:
+    case FieldType.INTEGER: {
+      switch (operatorType) {
+        case OperatorType.IS_BETWEEN:
+          throw new Error("unimplemented!");
+        default:
+          return (
+            <TextFilterInput
+              inputType="integer"
+              fieldName={field.name}
+              value={values[0]}
+              onUpdate={(value) => onUpdate([value])}
+              onDone={(value) => onDone([value])}
+            />
+          );
+      }
+    }
+    case FieldType.FLOAT: {
+      switch (operatorType) {
+        case OperatorType.IS_BETWEEN:
+          throw new Error("unimplemented!");
+        default:
+          return (
+            <TextFilterInput
+              inputType="float"
+              fieldName={field.name}
+              value={values[0]}
+              onUpdate={(value) => onUpdate([value])}
+              onDone={(value) => onDone([value])}
+            />
+          );
+      }
+    }
+    case FieldType.STRING_ENUM: {
+      switch (operatorType) {
+        case OperatorType.IS:
+        case OperatorType.IS_NOT:
+          return (
+            <StringEnumValuesSelector
+              label={`Select ${field.name}`}
+              values={values}
+              onUpdate={onUpdate}
+              onDone={onDone}
+              strEnum={USAStates}
+            />
+          );
+        default:
+          return (
+            <TextFilterInput
+              inputType="text"
+              fieldName={field.name}
+              value={values[0]}
+              onUpdate={(value) => onUpdate([value])}
+              onDone={(value) => onDone([value])}
+            />
+          );
+      }
+    }
+    case FieldType.TEXT:
       return (
-        <StringEnumValuesSelector
-          label={`Select ${field.name}`}
-          values={values}
-          onUpdate={onUpdate}
-          onDone={onDone}
-          strEnum={USAStates}
+        <TextFilterInput
+          inputType="text"
+          fieldName={field.name}
+          value={values[0]}
+          onUpdate={(value) => onUpdate([value])}
+          onDone={(value) => onDone([value])}
         />
       );
-    default:
-  }
-
-  return (
-    <TextInput
-      inputRef={ref}
-      placeholder="Filter values..."
-      width="auto"
-      borderRadius={0}
-      borderColor={TOKEN_COLOR}
-      value={values[0]}
-      onChange={(value) => onUpdate([value])}
-      onKeyDown={(e) =>
-        e.key === "Enter" && !!values[0].trim()
-          ? onDone([values[0].trim()])
-          : null
+    case FieldType.DATE: {
+      if (operatorType == OperatorType.IS_BETWEEN) {
+        throw new Error("unimplemented!");
+      } else {
+        throw new Error("unimplemented!");
       }
-      onKeyUp={(e) => {
-        if (e.key == "Enter") {
-          if (values[0].trim() && ref.current) {
-            // This is to make sure contenteditable doesn't add empty <br>s and <div>s
-            ref.current.innerHTML = "";
-          }
-        }
-      }}
-    />
-  );
+    }
+    case FieldType.DATE_AND_TIME: {
+      if (operatorType == OperatorType.IS_BETWEEN) {
+        throw new Error("unimplemented!");
+      } else {
+        throw new Error("unimplemented!");
+      }
+    }
+    case FieldType.ARRAY:
+      throw new Error("unimplemented!");
+
+    default:
+      throw new Error("unimplemented!");
+  }
 }
