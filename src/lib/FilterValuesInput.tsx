@@ -1,11 +1,10 @@
 import { FieldBase, FieldType, OperatorType } from "./types";
 import * as React from "react";
-import TextInput from "./components/TextInput";
-import { TOKEN_COLOR } from "./utils/constants";
 import BooleanValueSelector from "./BooleanValueSelector";
 import StringEnumValuesSelector from "./StringEnumValuesSelector";
 import USAStates from "../app/USAStates";
 import TextFilterInput from "./TextFilterInput";
+import DateFilterInput from "./DateFilterInput";
 
 interface IFilterValuesInput {
   field: FieldBase;
@@ -41,7 +40,6 @@ export default function FilterValuesInput({
           return (
             <TextFilterInput
               inputType="integer"
-              fieldName={field.name}
               value={values[0]}
               onUpdate={(value) => onUpdate([value])}
               onDone={(value) => onDone([value])}
@@ -57,7 +55,6 @@ export default function FilterValuesInput({
           return (
             <TextFilterInput
               inputType="float"
-              fieldName={field.name}
               value={values[0]}
               onUpdate={(value) => onUpdate([value])}
               onDone={(value) => onDone([value])}
@@ -82,7 +79,6 @@ export default function FilterValuesInput({
           return (
             <TextFilterInput
               inputType="text"
-              fieldName={field.name}
               value={values[0]}
               onUpdate={(value) => onUpdate([value])}
               onDone={(value) => onDone([value])}
@@ -94,7 +90,6 @@ export default function FilterValuesInput({
       return (
         <TextFilterInput
           inputType="text"
-          fieldName={field.name}
           value={values[0]}
           onUpdate={(value) => onUpdate([value])}
           onDone={(value) => onDone([value])}

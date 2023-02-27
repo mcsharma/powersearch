@@ -166,13 +166,6 @@ export default function TextInput({
     }
   }, []);
 
-  // TODO: This is not working, not focussing on mount.
-  React.useEffect(() => {
-    if (inputRef?.current) {
-      inputRef.current.focus();
-    }
-  }, [!!inputRef?.current]);
-
   if (width === "auto") {
     return (
       <SpanInput

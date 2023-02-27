@@ -3,26 +3,25 @@ import TextInput from "./components/TextInput";
 import { TOKEN_COLOR } from "./utils/constants";
 
 interface ITextFilterInput {
-  fieldName: string;
   inputType: "integer" | "float" | "text";
   value: string;
   onUpdate: (value: string) => void;
   onDone: (value: string) => void;
+  onFocus?: () => void;
 }
 
 export default function TextFilterInput({
-  fieldName,
   inputType,
   value,
   onUpdate,
   onDone,
+  onFocus,
 }: ITextFilterInput) {
   const ref = React.useRef<HTMLElement>(null);
 
   const isValidValue = (newValue: string) => {
     switch (inputType) {
       case "integer":
-        console.log(newValue, newValue.match(/^\d*$/));
         return newValue.match(/^\d*$/);
       case "float":
         return newValue.match(/^\d*\.?\d*$/);
@@ -40,6 +39,7 @@ export default function TextFilterInput({
 
   return (
     <TextInput
+      onFocus={onFocus}
       inputRef={ref}
       placeholder={"Filter value"}
       width={inputType === "text" ? "auto" : 100}
