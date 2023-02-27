@@ -4,7 +4,6 @@ import BooleanValueSelector from "./BooleanValueSelector";
 import StringEnumValuesSelector from "./StringEnumValuesSelector";
 import USAStates from "../app/USAStates";
 import TextFilterInput from "./TextFilterInput";
-import DateFilterInput from "./DateFilterInput";
 
 interface IFilterValuesInput {
   field: FieldBase;
