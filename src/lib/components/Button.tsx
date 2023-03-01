@@ -2,7 +2,6 @@ import * as React from "react";
 import { TOKEN_COLOR, TOKEN_HEIGHT } from "../utils/constants";
 import { RoundMode } from "../utils/types";
 import { roundModeToBorderRadius } from "../utils/roundModeToBorderRadius";
-import Icon, { IconType } from "../icons/Icon";
 
 interface IButton {
   label: string;
@@ -11,7 +10,7 @@ interface IButton {
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
   buttonRef?: React.RefObject<HTMLButtonElement>;
   ownedIDs?: Array<string>;
-  icon?: IconType;
+  iconRight?: React.ReactNode;
 }
 
 export default function Button({
@@ -21,6 +20,7 @@ export default function Button({
   onClick,
   buttonRef,
   onKeyDown,
+  iconRight,
 }: IButton) {
   return (
     <Root
@@ -29,23 +29,28 @@ export default function Button({
       aria-label={label}
       onClick={onClick}
       round={round}
+      hasIconRight={!!iconRight}
       aria-owns={ownedIDs ? ownedIDs.join(" ") : undefined}
     >
       {label}
-      <Icon name="caret-down" margin="3px 0 0 4px" color={"#646464"} />
+      {iconRight}
     </Root>
   );
 }
 
 interface RootProps {
   round?: RoundMode;
+  hasIconRight: boolean;
 }
-const Root = window.styled.button.attrs(({ round }: RootProps) => ({
-  round,
-}))`
+const Root = window.styled.button.attrs(
+  ({ round, hasIconRight }: RootProps) => ({
+    round,
+    hasIconRight,
+  })
+)`
   border: none;
   border-radius: ${({ round }) => roundModeToBorderRadius[round ?? "both"]};
-  padding: 0 12px;
+  padding: ${({ hasIconRight }) => (hasIconRight ? "0 8px 0 12px" : "0 12px")};
   box-sizing: border-box;
   height: ${TOKEN_HEIGHT}px;
   display: flex;
@@ -58,11 +63,5 @@ const Root = window.styled.button.attrs(({ round }: RootProps) => ({
   cursor: pointer;
   & > svg {
     pointer-events: none;
-  }
-`;
-
-const ButtonIcon = window.styled(Icon)`
-  &svg {
-    margin: 3px 0 0 4px;
   }
 `;

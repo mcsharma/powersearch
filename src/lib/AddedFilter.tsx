@@ -1,4 +1,4 @@
-import { SimpleFilter } from "./types";
+import { FieldType, SimpleFilter } from "./types";
 import * as React from "react";
 import Token from "./Token";
 import RemoveFilterButton from "./RemoveFilterButton";
@@ -6,6 +6,10 @@ import OperatorSelector from "./OperatorSelector";
 import FilterValuesInput from "./FilterValuesInput";
 import Button from "./components/Button";
 import valuesList from "./utils/valuesList";
+import getInputType from "./utils/getInputType";
+import EditIcon from "@mui/icons-material/Edit";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { ICON_COLOR } from "./utils/constants";
 
 interface IFilterToken {
   filter: SimpleFilter<any>;
@@ -20,6 +24,7 @@ const AddedFilter: React.FC<IFilterToken> = ({
 }) => {
   const valuesLabel = valuesList(filter.values);
   const [isEditing, setIsEditing] = React.useState(false);
+  const inputType = getInputType(filter.field.type, filter.operator);
   return (
     <Root>
       <Token round="left" label={filter.field.name} key="field" />
@@ -44,6 +49,16 @@ const AddedFilter: React.FC<IFilterToken> = ({
         <>
           <div style={{ width: 1 }} />
           <Button
+            iconRight={
+              inputType === "enum" ? (
+                <ArrowDropDownIcon sx={{ ml: "4px" }} htmlColor={ICON_COLOR} />
+              ) : (
+                <EditIcon
+                  sx={{ ml: "8px", fontSize: "15px" }}
+                  htmlColor={ICON_COLOR}
+                />
+              )
+            }
             label={valuesLabel}
             onClick={() => setIsEditing(true)}
             round="none"

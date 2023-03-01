@@ -33,10 +33,10 @@ export default function DateInput({ label, value, onChange }: IDateInput) {
             size="small"
             margin="none"
             sx={{
-              fontSize: 14,
+              fontSize: "0.875rem",
               border: `1px solid ${TOKEN_COLOR}`,
               width: 124,
-              padding: "0 0 0 8px",
+              padding: "0 0 0 0.5rem",
             }}
             inputRef={props.inputRef}
             onChange={props.inputProps?.onChange}

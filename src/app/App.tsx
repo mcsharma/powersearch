@@ -18,7 +18,7 @@ const GlobalStyle = styled.createGlobalStyle`
   body {
     margin: 0;
     font-family: verdana;
-    font-size: 14px;
+    font-size: 0.875rem;
   }
   [contenteditable="true"]:empty:before {
     content: attr(placeholder);

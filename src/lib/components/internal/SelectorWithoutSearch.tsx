@@ -6,10 +6,14 @@ import { MenuItem } from "../DropdownMenuBase";
 import DropdownMenu from "../DropdownMenu";
 import valuesList from "../../utils/valuesList";
 import { ISelector } from "../Selector";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { ICON_COLOR } from "../../utils/constants";
 
 type ElementAction = "click" | "enter" | "space";
 // For single select T is MenuItem, for multi select, T is MenuItem[]
-export default function SelectorWithoutSearch<T extends Array<MenuItem> | MenuItem>({
+export default function SelectorWithoutSearch<
+  T extends Array<MenuItem> | MenuItem
+>({
   label,
   placeholder,
   items,
@@ -204,6 +208,9 @@ export default function SelectorWithoutSearch<T extends Array<MenuItem> | MenuIt
   return (
     <>
       <Button
+        iconRight={
+          <ArrowDropDownIcon sx={{ ml: "4px" }} htmlColor={ICON_COLOR} />
+        }
         buttonRef={buttonRef as React.RefObject<HTMLButtonElement>}
         onClick={() => onButtonAction("click")}
         label={buttonLabel}

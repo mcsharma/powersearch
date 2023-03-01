@@ -7,7 +7,8 @@ import valuesList from "../../utils/valuesList";
 import { ISelector } from "../Selector";
 import Token from "../../Token";
 import Button from "../Button";
-import { TOKEN_HEIGHT } from "../../utils/constants";
+import { ICON_COLOR, TOKEN_HEIGHT } from "../../utils/constants";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 export default function SelectorWithSearch<
   T extends Array<MenuItem> | MenuItem
@@ -209,6 +210,9 @@ export default function SelectorWithSearch<
   return (
     <>
       <Button
+        iconRight={
+          <ArrowDropDownIcon sx={{ ml: "4px" }} htmlColor={ICON_COLOR} />
+        }
         buttonRef={buttonRef as React.RefObject<HTMLButtonElement>}
         onClick={() => (menuShown ? closeMenu() : openMenu())}
         label={buttonLabel}

@@ -1,7 +1,12 @@
 .MuiCalendarOrClockPicker-root {
-  margin-top: 12px;
+  margin-top: .75rem;
 }
 
-.PS-DatePickerInput .MuiIconButton-root:hover {
-  color: rgb(90, 90, 90);
+.PS-DatePickerInput .MuiSvgIcon-root {
+  font-size: 1.3rem;
+  margin-bottom: -1px;
+}
+
+.PS-DatePickerInput .MuiSvgIcon-root:hover {
+  color: #625B71;
 }
