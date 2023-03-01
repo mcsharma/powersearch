@@ -5,6 +5,7 @@ import FieldSearchTypeahead from "./FieldSearchTypeahead";
 import { FieldBase, OperatorType, SimpleFilter } from "./types";
 import getDefaultFilterValues from "./utils/getDefaultFilterValues";
 const styled = window.styled;
+import "./css/index.css";
 
 interface IPowerSearch {
   schema: Array<FieldBase>;

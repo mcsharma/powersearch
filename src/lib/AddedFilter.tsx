@@ -29,7 +29,6 @@ const AddedFilter: React.FC<IFilterToken> = ({
         selectedOperator={filter.operator}
         onChange={(op) => onUpdate({ ...filter, operator: op })}
       />
-      <div style={{ width: 1 }} />
       {isEditing ? (
         <FilterValuesInput
           field={filter.field}
@@ -42,13 +41,16 @@ const AddedFilter: React.FC<IFilterToken> = ({
           }}
         />
       ) : (
-        <Button
-          label={valuesLabel}
-          onClick={() => setIsEditing(true)}
-          round="none"
-        />
+        <>
+          <div style={{ width: 1 }} />
+          <Button
+            label={valuesLabel}
+            onClick={() => setIsEditing(true)}
+            round="none"
+          />
+          <div style={{ width: 1 }} />
+        </>
       )}
-      <div style={{ width: 1 }} />
       <RemoveFilterButton onClick={onDelete} />
     </Root>
   );

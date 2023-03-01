@@ -43,7 +43,6 @@ const DraftFilter: React.FC<IActiveFilter> = ({
         onUpdate={(values) => onUpdate({ ...filter, values })}
         onDone={onInputDone}
       />
-      <div style={{ width: 1 }} />
       <RemoveFilterButton onClick={onRemove} />
     </Root>
   );

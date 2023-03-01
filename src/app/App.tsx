@@ -1,6 +1,8 @@
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import * as React from "react";
 import PowerSearch from "../lib/PowerSearch";
 import { schemaFields } from "./testSchema";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const styled = window.styled;
 
@@ -27,12 +29,12 @@ const GlobalStyle = styled.createGlobalStyle`
 
 const App: React.FC = () => {
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <GlobalStyle />
       <Root>
         <PowerSearch schema={schemaFields} />
       </Root>
-    </>
+    </LocalizationProvider>
   );
 };
 

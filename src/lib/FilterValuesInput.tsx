@@ -2,8 +2,10 @@ import { FieldBase, FieldType, OperatorType } from "./types";
 import * as React from "react";
 import BooleanValueSelector from "./BooleanValueSelector";
 import StringEnumValuesSelector from "./StringEnumValuesSelector";
+import TextField from "@mui/material/TextField";
 import USAStates from "../app/USAStates";
 import TextFilterInput from "./TextFilterInput";
+import DateInput from "./components/DateInput";
 
 interface IFilterValuesInput {
   field: FieldBase;
@@ -20,6 +22,7 @@ export default function FilterValuesInput({
   onDone,
   operatorType,
 }: IFilterValuesInput) {
+  const [value, setValue] = React.useState<string | null>(null);
   switch (field.type) {
     case FieldType.BOOLEAN: {
       return (
@@ -95,10 +98,17 @@ export default function FilterValuesInput({
         />
       );
     case FieldType.DATE: {
-      if (operatorType == OperatorType.IS_BETWEEN) {
+      console.log(operatorType);
+      if (operatorType === OperatorType.IS_BETWEEN) {
         throw new Error("unimplemented!");
       } else {
-        throw new Error("unimplemented!");
+        return (
+          <DateInput
+            label=""
+            value={values[0]}
+            onChange={(value) => onUpdate([value])}
+          />
+        );
       }
     }
     case FieldType.DATE_AND_TIME: {
