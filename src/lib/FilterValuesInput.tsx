@@ -22,7 +22,6 @@ export default function FilterValuesInput({
   onDone,
   operatorType,
 }: IFilterValuesInput) {
-  const [value, setValue] = React.useState<string | null>(null);
   switch (field.type) {
     case FieldType.BOOLEAN: {
       return (
@@ -37,13 +36,34 @@ export default function FilterValuesInput({
     case FieldType.INTEGER: {
       switch (operatorType) {
         case OperatorType.IS_BETWEEN:
-          throw new Error("unimplemented!");
+          return (
+            <>
+              <TextFilterInput
+                width={80}
+                label="min value"
+                inputType="integer"
+                value={values[0]}
+                onChange={(value) => onUpdate([value, values[1]])}
+                onDone={(value) => onDone([value, values[1]])}
+              />
+              <TextFilterInput
+                width={80}
+                label="max value"
+                inputType="integer"
+                value={values[1]}
+                onChange={(value) => onUpdate([values[0], value])}
+                onDone={(value) => onDone([values[0], value])}
+              />
+            </>
+          );
+
         default:
           return (
             <TextFilterInput
+              label={field.name}
               inputType="integer"
               value={values[0]}
-              onUpdate={(value) => onUpdate([value])}
+              onChange={(value) => onUpdate([value])}
               onDone={(value) => onDone([value])}
             />
           );
@@ -52,13 +72,33 @@ export default function FilterValuesInput({
     case FieldType.FLOAT: {
       switch (operatorType) {
         case OperatorType.IS_BETWEEN:
-          throw new Error("unimplemented!");
+          return (
+            <>
+              <TextFilterInput
+                width={80}
+                label="min value"
+                inputType="float"
+                value={values[0]}
+                onChange={(value) => onUpdate([value, values[1]])}
+                onDone={(value) => onDone([value, values[1]])}
+              />
+              <TextFilterInput
+                width={80}
+                label="max value"
+                inputType="float"
+                value={values[1]}
+                onChange={(value) => onUpdate([values[0], value])}
+                onDone={(value) => onDone([values[0], value])}
+              />
+            </>
+          );
         default:
           return (
             <TextFilterInput
+              label={field.name}
               inputType="float"
               value={values[0]}
-              onUpdate={(value) => onUpdate([value])}
+              onChange={(value) => onUpdate([value])}
               onDone={(value) => onDone([value])}
             />
           );
@@ -81,8 +121,9 @@ export default function FilterValuesInput({
           return (
             <TextFilterInput
               inputType="text"
+              label={field.name}
               value={values[0]}
-              onUpdate={(value) => onUpdate([value])}
+              onChange={(value) => onUpdate([value])}
               onDone={(value) => onDone([value])}
             />
           );
@@ -91,9 +132,10 @@ export default function FilterValuesInput({
     case FieldType.TEXT:
       return (
         <TextFilterInput
+          label={field.name}
           inputType="text"
           value={values[0]}
-          onUpdate={(value) => onUpdate([value])}
+          onChange={(value) => onUpdate([value])}
           onDone={(value) => onDone([value])}
         />
       );

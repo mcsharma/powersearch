@@ -3,7 +3,7 @@ import { TOKEN_HEIGHT } from "../utils/constants";
 
 type BorderType = "all" | "horizontal" | "bottom" | "none";
 
-interface ITextInput {
+export interface ITextInput {
   id?: string;
   border?: BorderType;
   borderColor?: string;

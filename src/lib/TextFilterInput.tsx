@@ -1,21 +1,20 @@
 import * as React from "react";
-import TextInput from "./components/TextInput";
+import TextInput, { ITextInput } from "./components/TextInput";
 import { TOKEN_COLOR } from "./utils/constants";
 
-interface ITextFilterInput {
+interface ITextFilterInput extends ITextInput {
   inputType: "integer" | "float" | "text";
-  value: string;
-  onUpdate: (value: string) => void;
+  label: string;
   onDone: (value: string) => void;
-  onFocus?: () => void;
 }
 
 export default function TextFilterInput({
   inputType,
-  value,
-  onUpdate,
+  label,
   onDone,
-  onFocus,
+  value,
+  onChange,
+  ...remainingProps
 }: ITextFilterInput) {
   const ref = React.useRef<HTMLElement>(null);
 
@@ -39,14 +38,13 @@ export default function TextFilterInput({
 
   return (
     <TextInput
-      onFocus={onFocus}
       inputRef={ref}
-      placeholder={"Filter value"}
+      placeholder={label}
       width={inputType === "text" ? "auto" : 100}
       borderRadius={0}
       borderColor={TOKEN_COLOR}
       value={value}
-      onChange={(newValue) => isValidValue(newValue) && onUpdate(newValue)}
+      onChange={(newValue) => isValidValue(newValue) && onChange(newValue)}
       onKeyDown={(e) =>
         e.key === "Enter" && !!value.trim() && onDone(cleanValue(value))
       }
@@ -58,6 +56,7 @@ export default function TextFilterInput({
           }
         }
       }}
+      {...remainingProps}
     />
   );
 }

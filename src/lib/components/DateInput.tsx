@@ -44,7 +44,7 @@ export default function DateInput({ label, value, onChange }: IDateInput) {
             slotProps={{
               input: {
                 ...props.inputProps,
-                style: { padding: 0 },
+                style: { padding: "1px 0 0 0" },
               },
             }}
           />
