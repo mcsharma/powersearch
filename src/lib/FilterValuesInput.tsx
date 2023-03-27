@@ -75,6 +75,7 @@ export default function FilterValuesInput({
           return (
             <>
               <TextFilterInput
+                key="min"
                 width={80}
                 label="min value"
                 inputType="float"
@@ -83,6 +84,7 @@ export default function FilterValuesInput({
                 onDone={(value) => onDone([value, values[1]])}
               />
               <TextFilterInput
+                key="max"
                 width={80}
                 label="max value"
                 inputType="float"
@@ -142,7 +144,22 @@ export default function FilterValuesInput({
     case FieldType.DATE: {
       console.log(operatorType);
       if (operatorType === OperatorType.IS_BETWEEN) {
-        throw new Error("unimplemented!");
+        return (
+          <>
+            <DateInput
+              key="min"
+              label="from date"
+              value={values[0]}
+              onChange={(value) => onUpdate([value])}
+            />
+            <DateInput
+              key="max"
+              label="to date"
+              value={values[0]}
+              onChange={(value) => onUpdate([value])}
+            />
+          </>
+        );
       } else {
         return (
           <DateInput
