@@ -10,3 +10,7 @@
 .PS-DatePickerInput .MuiSvgIcon-root:hover {
   color: #625B71;
 }
+
+.MuiSvgIcon-fontSizeSmall {
+  font-size: 1rem !important;
+}

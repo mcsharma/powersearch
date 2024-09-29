@@ -1,3 +1,5 @@
+import { EntityNames } from './utils/types'
+
 export enum FieldType {
   BOOLEAN,
   INTEGER,
@@ -41,7 +43,7 @@ export enum ConjunctionType {
 
 export interface FieldBase {
   type: FieldType;
-  name: string;
+  names: EntityNames;
   desc: string;
 }
 

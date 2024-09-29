@@ -5,7 +5,7 @@ import { roundModeToBorderRadius } from "../utils/roundModeToBorderRadius";
 
 interface IButton {
   label: string;
-  round?: RoundMode;
+  round?: keyof typeof RoundMode;
   onClick?: () => void;
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
   buttonRef?: React.RefObject<HTMLButtonElement>;
@@ -39,7 +39,7 @@ export default function Button({
 }
 
 interface RootProps {
-  round?: RoundMode;
+  round?: keyof typeof RoundMode;
   hasIconRight: boolean;
 }
 const Root = window.styled.button.attrs(
@@ -49,7 +49,7 @@ const Root = window.styled.button.attrs(
   })
 )`
   border: none;
-  border-radius: ${({ round }) => roundModeToBorderRadius[round ?? "both"]};
+  border-radius: ${({ round }) => roundModeToBorderRadius[round ?? "all"]};
   padding: ${({ hasIconRight }) => (hasIconRight ? "0 8px 0 12px" : "0 12px")};
   box-sizing: border-box;
   height: ${TOKEN_HEIGHT}px;
